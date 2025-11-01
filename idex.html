@@ -159,7 +159,7 @@
         .btn-secondary {
             border: 2px solid var(--primary-green-medium);
             color: var(--primary-green-medium);
-            background-color: transparent.
+            background-color: transparent;
         }
 
         .btn-secondary:hover {
@@ -311,6 +311,7 @@
         .faq-item.active .faq-answer {
              padding-bottom: 1rem;
         }
+
 
         .faq-toggle {
             font-size: 1.5rem;
@@ -605,13 +606,13 @@
         
         @media (max-width: 768px) {
             html {
-                font-size: 93.75%;
+                font-size: 93.75%; /* 15px */
             }
             
             nav ul {
                 position: fixed;
                 left: -100%;
-                top: 73px;
+                top: 73px; /* Altura do header */
                 flex-direction: column;
                 background-color: white;
                 width: 100%;
@@ -664,7 +665,15 @@
             }
         }
     </style>
-    <!-- Removido o importmap de backend (express/cors/genai) -->
+<script type="importmap">
+{
+  "imports": {
+    "express": "https://aistudiocdn.com/express@^5.1.0",
+    "cors": "https://aistudiocdn.com/cors@^2.8.5",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+  }
+}
+</script>
 </head>
 <body>
 
@@ -689,8 +698,42 @@
     </header>
 
     <main>
-        <!-- (seções omitidas por brevidade — mantidas iguais às suas) -->
-        <!-- Hero, Como Funciona, etc. -->
+        <section id="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h1>Gerador de Petições Iniciais com Inteligência Artificial</h1>
+                    <p>Rápido, simples e pronto para protocolar no Juizado. Crie seu documento jurídico em minutos e defenda seus direitos com mais facilidade.</p>
+                    <a href="#form-section" class="btn btn-primary">Criar Petição Agora</a>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb18?q=80&w=1974&auto=format&fit=crop" alt="Pessoa assinando um documento legal">
+                </div>
+            </div>
+        </section>
+
+        <section id="how-it-works">
+            <div class="container">
+                <h2 class="section-title">Como Funciona?</h2>
+                <p class="section-subtitle">Em três passos simples, sua petição estará pronta para ser protocolada.</p>
+                <div class="steps-container">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Preencha o Formulário</h3>
+                        <p>Informe os detalhes do seu caso de forma guiada e intuitiva. Nossa plataforma pergunta tudo o que é necessário.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>A IA Monta a Petição</h3>
+                        <p>Nossa Inteligência Artificial analisa suas informações e redige uma petição inicial completa, em linguagem jurídica e formatada corretamente.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Imprima e Protocole</h3>
+                        <p>Você recebe o documento pronto para imprimir, assinar e levar ao Juizado Especial Cível da sua cidade, junto com seus documentos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section id="form-section">
             <div class="container">
@@ -712,27 +755,388 @@
                     </div>
 
                     <form id="petition-form" novalidate>
-                        <!-- (todo o conteúdo do formulário permanece igual) -->
-                        <!-- ... -->
                         <div class="progress-container">
                              <div class="progress-bar-track">
                                 <div class="progress-bar-fill"></div>
                             </div>
                             <p class="progress-text">Pergunta 1 de N</p>
                         </div>
-                        <!-- ... todas as suas etapas/steps aqui ... -->
+
+                        <!-- STEP: Problem Type -->
+                        <div class="quiz-step" data-step-id="problem-type">
+                             <h3 class="quiz-question">Para começar, qual o seu problema com a concessionária de energia?</h3>
+                             <div class="form-group">
+                                <div class="options-grid">
+                                    <label><input type="radio" name="problem-type" value="corte_energia" required><span>Corte indevido de energia</span></label>
+                                    <label><input type="radio" name="problem-type" value="danos_eletricos" required><span>Oscilação/queda que danificou aparelhos</span></label>
+                                    <label><input type="radio" name="problem-type" value="toi" required><span>Multa / TOI indevido</span></label>
+                                    <label><input type="radio" name="problem-type" value="recusa_ligacao" required><span>Recusa na ligação de nova energia</span></label>
+                                    <label><input type="radio" name="problem-type" value="cobranca_indevida" required><span>Cobrança indevida na conta</span></label>
+                                    <label><input type="radio" name="problem-type" value="outro" required><span>Outro problema</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <!-- STEP: Author Info -->
+                         <div class="quiz-step" data-step-id="author-info">
+                            <h3 class="quiz-question">Ótimo. Agora, vamos aos seus dados. Qual é o seu nome completo?</h3>
+                             <div class="form-group">
+                                <input type="text" id="author-name" name="author-name" required placeholder="Digite seu nome completo">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="author-cpf">
+                            <h3 class="quiz-question">E o seu CPF?</h3>
+                             <div class="form-group">
+                                <input type="text" id="author-cpf" name="author-cpf" required placeholder="Digite seu CPF">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                         <div class="quiz-step" data-step-id="author-address">
+                            <h3 class="quiz-question">Qual seu endereço completo?</h3>
+                             <div class="form-group">
+                                <input type="text" id="author-address" name="author-address" required placeholder="Rua, número, bairro, cidade e estado">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="author-contact">
+                            <h3 class="quiz-question">Para finalizar seus dados, qual seu e-mail e telefone?</h3>
+                             <div class="form-group">
+                                <input type="email" id="author-email" name="author-email" required placeholder="seuemail@exemplo.com">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                             <div class="form-group">
+                                <input type="tel" id="author-phone" name="author-phone" required placeholder="(XX) XXXXX-XXXX">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <!-- STEP: Company Info -->
+                         <div class="quiz-step" data-step-id="company-info">
+                            <h3 class="quiz-question">Contra qual concessionária de energia é o processo?</h3>
+                             <div class="form-group">
+                                <input type="text" id="company-name" name="company-name" required placeholder="Ex: Enel, Neoenergia, Coelba, etc.">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        
+                        <!-- DYNAMIC BLOCKS START HERE -->
+
+                        <!-- ## CORTE INDEVIDO BLOCK ## -->
+                        <div class="quiz-step" data-step-id="corte-data">
+                            <h3 class="quiz-question">Em que data a sua energia foi cortada?</h3>
+                             <div class="form-group">
+                                <input type="date" id="corte-data-input" name="corte-data" required>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="corte-aviso">
+                            <h3 class="quiz-question">A empresa avisou com antecedência que iria cortar?</h3>
+                             <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="corte-aviso" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="corte-aviso" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="corte-divida">
+                            <h3 class="quiz-question">Você tinha alguma conta em atraso no dia do corte?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="corte-divida" value="nao" required><span>Não, todas as contas estavam pagas</span></label>
+                                    <label><input type="radio" name="corte-divida" value="sim_indevida" required><span>Sim, mas a cobrança era indevida</span></label>
+                                    <label><input type="radio" name="corte-divida" value="discordo" required><span>Não concordo com a dívida que eles alegam</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="corte-religacao">
+                            <h3 class="quiz-question">Quando a energia foi religada (se já foi)?</h3>
+                            <div class="form-group">
+                                <input type="date" id="corte-religacao-data" name="corte-religacao-data">
+                                <p style="text-align:center; margin-top: 1rem;">Se ainda não foi religada, pode deixar em branco.</p>
+                            </div>
+                        </div>
+                         <div class="quiz-step" data-step-id="corte-prejuizo-pergunta">
+                            <h3 class="quiz-question">Você teve algum prejuízo com alimentos estragados, medicamentos, perda de trabalho, etc?</h3>
+                             <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="corte-prejuizo-pergunta" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="corte-prejuizo-pergunta" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="corte-prejuizo-detalhes">
+                            <h3 class="quiz-question">Pode nos contar quais foram os prejuízos e o valor estimado?</h3>
+                            <div class="form-group">
+                                <textarea name="corte-prejuizo-detalhes" placeholder="Ex: Perdi R$200,00 em carnes e laticínios na geladeira."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- ## OSCILAÇÃO / DANOS ELÉTRICOS BLOCK ## -->
+                        <div class="quiz-step" data-step-id="oscilacao-data">
+                            <h3 class="quiz-question">Qual foi o dia da oscilação ou queda de energia que causou os danos?</h3>
+                             <div class="form-group">
+                                <input type="date" id="oscilacao-data-input" name="oscilacao-data" required>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                         <div class="quiz-step" data-step-id="oscilacao-equipamentos">
+                            <h3 class="quiz-question">Quais equipamentos foram danificados?</h3>
+                            <div class="form-group">
+                                <textarea name="oscilacao-equipamentos" required placeholder="Liste os equipamentos com marca, modelo e valor aproximado. Ex: TV Samsung 50 polegadas (R$ 2.500,00), Geladeira Brastemp (R$ 3.000,00)."></textarea>
+                                 <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="oscilacao-comunicacao">
+                            <h3 class="quiz-question">Você comunicou o problema à empresa?</h3>
+                             <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="oscilacao-comunicacao" value="sim" required><span>Sim, e anotei o protocolo</span></label>
+                                    <label><input type="radio" name="oscilacao-comunicacao" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="oscilacao-protocolo">
+                            <h3 class="quiz-question">Qual o número do protocolo e a data?</h3>
+                            <div class="form-group">
+                                <input type="text" name="oscilacao-protocolo" placeholder="Número do protocolo de atendimento">
+                            </div>
+                        </div>
+
+                        <!-- ## TOI / MULTA BLOCK ## -->
+                        <div class="quiz-step" data-step-id="toi-numero">
+                            <h3 class="quiz-question">Qual é o número do TOI (Termo de Ocorrência e Inspeção), se você tiver?</h3>
+                             <div class="form-group">
+                                <input type="text" id="toi-numero-input" name="toi-numero" placeholder="Pode deixar em branco se não tiver">
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="toi-data">
+                            <h3 class="quiz-question">Qual foi a data da vistoria ou da emissão do TOI?</h3>
+                            <div class="form-group">
+                                <input type="date" id="toi-data-input" name="toi-data" required>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="toi-presente">
+                            <h3 class="quiz-question">Você estava presente no momento da vistoria?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="toi-presente" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="toi-presente" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                         <div class="quiz-step" data-step-id="toi-cobranca">
+                            <h3 class="quiz-question">Após o TOI, houve corte de energia, ameaça de corte ou cobrança da multa?</h3>
+                            <div class="form-group">
+                                 <div class="radio-options">
+                                    <label><input type="radio" name="toi-cobranca" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="toi-cobranca" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        
+                        <!-- ## RECUSA DE LIGAÇÃO NOVA BLOCK ## -->
+                        <div class="quiz-step" data-step-id="recusa-data-solicitacao">
+                            <h3 class="quiz-question">Em que data você fez a solicitação da nova ligação de energia?</h3>
+                            <div class="form-group">
+                                <input type="date" name="recusa-data-solicitacao" required>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="recusa-motivo">
+                            <h3 class="quiz-question">A empresa informou o motivo para recusar a ligação? Se sim, qual foi?</h3>
+                            <div class="form-group">
+                                <textarea name="recusa-motivo" placeholder="Descreva o motivo informado pela empresa, se houver."></textarea>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="recusa-protocolo">
+                            <h3 class="quiz-question">Você tem algum número de protocolo desse atendimento?</h3>
+                            <div class="form-group">
+                                <input type="text" name="recusa-protocolo" placeholder="Digite o protocolo, se tiver.">
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="recusa-moradores">
+                            <h3 class="quiz-question">Há pessoas morando no imóvel que está sem energia?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="recusa-moradores" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="recusa-moradores" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <!-- ## COBRANÇA INDEVIDA BLOCK ## -->
+                        <div class="quiz-step" data-step-id="cobranca-tipo">
+                            <h3 class="quiz-question">Qual tipo de cobrança indevida você recebeu?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="cobranca-tipo" value="conta_acima" required><span>Conta com valor muito acima do normal</span></label>
+                                    <label><input type="radio" name="cobranca-tipo" value="debito_inexistente" required><span>Débito que você não reconhece</span></label>
+                                    <label><input type="radio" name="cobranca-tipo" value="cobranca_repetida" required><span>Cobrança de uma conta que já foi paga</span></label>
+                                    <label><input type="radio" name="cobranca-tipo" value="tarifa_irregular" required><span>Inclusão de alguma tarifa ou serviço irregular</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="cobranca-reclamacao">
+                            <h3 class="quiz-question">Você chegou a reclamar com a empresa sobre essa cobrança?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="cobranca-reclamacao" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="cobranca-reclamacao" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="cobranca-protocolos">
+                            <h3 class="quiz-question">Poderia informar os protocolos de reclamação?</h3>
+                            <div class="form-group">
+                                <textarea name="cobranca-protocolos" placeholder="Digite aqui os números de protocolo que você anotou."></textarea>
+                            </div>
+                        </div>
+                        <div class="quiz-step" data-step-id="cobranca-negativacao">
+                            <h3 class="quiz-question">Por causa dessa cobrança, seu nome foi negativado (SPC/Serasa)?</h3>
+                            <div class="form-group">
+                                <div class="radio-options">
+                                    <label><input type="radio" name="cobranca-negativacao" value="sim" required><span>Sim</span></label>
+                                    <label><input type="radio" name="cobranca-negativacao" value="nao" required><span>Não</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <!-- ## DYNAMIC BLOCKS END HERE ## -->
+
+                        <!-- STEP: Evidence -->
+                        <div class="quiz-step" data-step-id="provas-gerais">
+                             <h3 class="quiz-question">Quais provas você tem para juntar ao processo?</h3>
+                             <p class="section-subtitle" style="margin-bottom: 2rem; margin-top: -1.5rem;">Marque tudo o que você tiver. Quanto mais provas, melhor.</p>
+                             <div class="form-group">
+                                 <div class="checkbox-options options-grid">
+                                    <label><input type="checkbox" name="provas" value="conta_energia"><span>Conta de energia</span></label>
+                                    <label><input type="checkbox" name="provas" value="protocolo"><span>Protocolo de atendimento</span></label>
+                                    <label><input type="checkbox" name="provas" value="fotos_videos"><span>Fotos / vídeos</span></label>
+                                    <label><input type="checkbox" name="provas" value="prints"><span>Prints do app/site</span></label>
+                                    <label><input type="checkbox" name="provas" value="orcamentos_notas"><span>Orçamentos / notas fiscais</span></label>
+                                    <label><input type="checkbox" name="provas" value="contrato"><span>Contrato / número da instalação</span></label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- STEP: Damages & Values -->
+                        <div class="quiz-step" data-step-id="valores-pedidos">
+                             <h3 class="quiz-question">Você quer pedir alguma indenização?</h3>
+                             <div class="form-group">
+                                <label for="material-value">Qual o valor total do seu prejuízo material (se houver)?</label>
+                                <input type="text" id="material-value" name="material-value" placeholder="R$ 0,00">
+                                <p style="font-size: 0.8rem; color: var(--neutral-medium); margin-top: 4px;">Soma de tudo que você gastou e pode comprovar.</p>
+                            </div>
+                             <div class="form-group">
+                                 <label>Você quer pedir indenização por danos morais?</label>
+                                 <p style="font-size: 0.8rem; color: var(--neutral-medium); margin-bottom: 8px;">Pelo constrangimento, tempo perdido e sofrimento.</p>
+                                 <div class="radio-options">
+                                     <label><input type="radio" name="dano-moral-pergunta" value="sim" required><span>Sim</span></label>
+                                     <label><input type="radio" name="dano-moral-pergunta" value="nao" required><span>Não</span></label>
+                                 </div>
+                                 <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                            <div class="form-group" id="dano-moral-valor-group" style="display: none;">
+                                <label for="moral-value">Qual valor você sugere para os danos morais? (opcional)</label>
+                                <input type="text" id="moral-value" name="moral-value" placeholder="R$ 0,00">
+                            </div>
+                        </div>
+
+                        <!-- STEP: Final Info -->
+                        <div class="quiz-step" data-step-id="info-finais">
+                             <h3 class="quiz-question">Estamos quase no fim! Em qual cidade e estado você vai entrar com a ação?</h3>
+                             <div class="form-group">
+                                <input type="text" id="cidade-estado" name="cidade-estado" required placeholder="Ex: São Paulo, SP">
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                             <h3 class="quiz-question" style="font-size: 1.5rem; margin-top: 2rem;">Deseja pedir uma decisão urgente (liminar)?</h3>
+                             <p class="section-subtitle" style="margin-bottom: 2rem; margin-top: -1.5rem;">Ex: religação imediata da energia, suspensão da cobrança do TOI, etc.</p>
+                             <div class="form-group">
+                                <div class="radio-options">
+                                     <label><input type="radio" name="urgency-request" value="sim" required><span>Sim, preciso de uma decisão rápida</span></label>
+                                     <label><input type="radio" name="urgency-request" value="nao" required><span>Não, posso aguardar</span></label>
+                                </div>
+                                <div class="error-message">Campo obrigatório.</div>
+                            </div>
+                        </div>
+
+
                         <div class="quiz-navigation">
                             <button type="button" id="prevBtn" class="btn btn-secondary">Anterior</button>
                             <button type="button" id="nextBtn" class="btn btn-primary">Próximo</button>
                         </div>
+
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- FAQ (mantido) -->
+
         <section id="faq">
-            <!-- ... conteúdo igual ao seu ... -->
+            <div class="container">
+                <h2 class="section-title">Perguntas Frequentes</h2>
+                <p class="section-subtitle">Tire suas dúvidas sobre o nosso serviço e o Juizado Especial Cível.</p>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>O serviço substitui um advogado?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Não. Nossa ferramenta é educativa e gera uma proposta de petição inicial com base nos seus dados. Ela não oferece consultoria jurídica nem representa você. Para causas acima de 20 salários mínimos, a presença de um advogado é obrigatória por lei.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Preciso pagar para usar?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>A geração da petição através do nosso modelo básico é gratuita. Nosso objetivo é democratizar o acesso à justiça para causas mais simples.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>O que é o Juizado Especial Cível (JEC)?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Também conhecido como "juizado de pequenas causas", é uma parte da justiça criada para resolver de forma mais rápida, simples e sem custos, causas de menor complexidade e valor, como as de direito do consumidor.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Qual o limite de valor da causa no JEC?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>O limite é de 40 salários mínimos. Contudo, para ingressar sem advogado, o limite é de 20 salários mínimos. Nossa ferramenta foca em casos dentro deste limite.</p>
+                        </div>
+                    </div>
+                     <div class="faq-item">
+                        <div class="faq-question">
+                            <span>Como calculo o valor da causa?</span>
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>O valor da causa é a soma de todos os seus pedidos. Some os valores dos danos materiais (o que você gastou e pode comprovar) com uma estimativa razoável para os danos morais (o sofrimento que você passou).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -749,18 +1153,21 @@
     </footer>
 
     <script>
-        // URL da sua API (Render)
+        // URL da sua API (Render) - IMPORTANTE
         const API_URL = "https://backend-peticoes.onrender.com/api/generate-petition";
 
         document.addEventListener('DOMContentLoaded', function() {
-            // "Acorda" o backend do Render (opcional, ajuda a reduzir atraso)
-            fetch(API_URL, { method: 'OPTIONS' }).catch(() => {});
+            // "Acorda" o backend para reduzir a latência da primeira requisição
+            fetch(API_URL, { method: 'OPTIONS', mode: 'cors' }).catch(err => console.log("API wake-up call sent."));
 
             // Header scroll effect
             const header = document.getElementById('main-header');
             window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) header.classList.add('scrolled');
-                else header.classList.remove('scrolled');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
             });
 
             // Hamburger menu
@@ -777,7 +1184,11 @@
                     e.preventDefault();
                     const targetId = this.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
-                    if (targetElement) targetElement.scrollIntoView({ behavior: 'smooth' });
+
+                    if (targetElement) {
+                         targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+
                     if (navMenu.classList.contains('active')) {
                         hamburger.classList.remove('active');
                         navMenu.classList.remove('active');
@@ -800,8 +1211,10 @@
                 });
             });
 
-            // --- QUIZ LOGIC (todo o seu código original, com UM ajuste na chamada da API) ---
+
+            // --- QUIZ LOGIC ---
             const form = document.getElementById('petition-form');
+            const quizWrapper = document.getElementById('quiz-wrapper');
             const resultScreen = document.getElementById('result-screen');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
@@ -815,7 +1228,7 @@
                 toi: ['toi-numero', 'toi-data', 'toi-presente', 'toi-cobranca'],
                 recusa_ligacao: ['recusa-data-solicitacao', 'recusa-motivo', 'recusa-protocolo', 'recusa-moradores'],
                 cobranca_indevida: ['cobranca-tipo', 'cobranca-reclamacao', 'cobranca-negativacao'],
-                outro: []
+                outro: [] // No specific questions for 'other'
             };
 
             let quizFlow = [];
@@ -844,7 +1257,9 @@
                 if (stepElement) {
                     stepElement.classList.add('active');
                     const firstInput = stepElement.querySelector('input, select, textarea');
-                    if (firstInput) firstInput.focus();
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
                 }
                 updateProgress();
                 updateNavigationButtons();
@@ -858,21 +1273,27 @@
 
             function updateNavigationButtons() {
                 prevBtn.style.visibility = currentStepIndex === 0 ? 'hidden' : 'visible';
-                nextBtn.textContent = currentStepIndex === quizFlow.length - 1 ? 'Gerar Petição' : 'Próximo';
+                if (currentStepIndex === quizFlow.length - 1) {
+                    nextBtn.textContent = 'Gerar Petição';
+                } else {
+                    nextBtn.textContent = 'Próximo';
+                }
             }
             
             function navigate(direction) {
-                if (direction === 1) { // forward
+                if (direction === 1) { // Moving forward
                     if (!validateCurrentStep()) return;
-                    updateQuizFlow();
+                    
+                    updateQuizFlow(); // Recalculate flow before moving
+                    
                     if (currentStepIndex === quizFlow.length - 1) {
                         submitForm();
                     } else {
                         currentStepIndex++;
                         showStep(currentStepIndex);
                     }
-                } else { // back
-                    if (currentStepIndex > 0) {
+                } else { // Moving backward
+                     if (currentStepIndex > 0) {
                         currentStepIndex--;
                         showStep(currentStepIndex);
                     }
@@ -886,20 +1307,20 @@
 
                 currentStepElement.querySelectorAll('[required]').forEach(input => {
                     const formGroup = input.closest('.form-group');
-                    let ok = true;
+                    let isInputValid = true;
 
                     if (input.type === 'radio' || input.type === 'checkbox') {
-                        const checked = currentStepElement.querySelector(`input[name="${input.name}"]:checked`);
-                        if (!checked) ok = false;
+                         const checked = currentStepElement.querySelector(`input[name="${input.name}"]:checked`);
+                         if (!checked) isInputValid = false;
                     } else {
-                        if (!input.value.trim()) ok = false;
+                        if (!input.value.trim()) isInputValid = false;
                     }
 
-                    if (!ok) {
+                    if (!isInputValid) {
                         isValid = false;
-                        formGroup && formGroup.classList.add('invalid');
+                        if(formGroup) formGroup.classList.add('invalid');
                     } else {
-                        formGroup && formGroup.classList.remove('invalid');
+                         if(formGroup) formGroup.classList.remove('invalid');
                     }
                 });
                 return isValid;
@@ -909,24 +1330,28 @@
                 const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
 
+                // --- Main Problem Branching ---
                 const allProblemSteps = Object.values(stepBlocks).flat();
                 quizFlow = quizFlow.filter(step => !allProblemSteps.includes(step));
                 const problemType = data['problem-type'];
                 if (problemType && stepBlocks[problemType]) {
                     const companyInfoIndex = quizFlow.indexOf('company-info');
-                    if (companyInfoIndex > -1) {
-                        quizFlow.splice(companyInfoIndex + 1, 0, ...stepBlocks[problemType]);
+                    if(companyInfoIndex > -1) {
+                       quizFlow.splice(companyInfoIndex + 1, 0, ...stepBlocks[problemType]);
                     }
                 }
                 
+                // --- Conditional Steps ---
                 const conditionalSteps = {
                     'corte-prejuizo-detalhes': data['corte-prejuizo-pergunta'] === 'sim' ? 'corte-prejuizo-pergunta' : null,
                     'oscilacao-protocolo': data['oscilacao-comunicacao'] === 'sim' ? 'oscilacao-comunicacao' : null,
                     'cobranca-protocolos': data['cobranca-reclamacao'] === 'sim' ? 'cobranca-reclamacao' : null,
                 };
 
+                // Remove all possible conditional steps first
                 quizFlow = quizFlow.filter(step => !Object.keys(conditionalSteps).includes(step));
 
+                // Add back the ones that meet the condition
                 for (const [step, trigger] of Object.entries(conditionalSteps)) {
                     if (trigger) {
                         const triggerIndex = quizFlow.indexOf(trigger);
@@ -943,9 +1368,11 @@
 
                 const formData = new FormData(form);
                 const data = {};
-                formData.forEach((value, key) => {
+                 formData.forEach((value, key) => {
                     if (data[key]) {
-                        if (!Array.isArray(data[key])) data[key] = [data[key]];
+                        if (!Array.isArray(data[key])) {
+                            data[key] = [data[key]];
+                        }
                         data[key].push(value);
                     } else {
                         data[key] = value;
@@ -953,24 +1380,31 @@
                 });
 
                 try {
-                    // >>> AQUI É O AJUSTE PRINCIPAL: usar a URL completa do backend <<<
+                    // This is where we call the backend
                     const response = await fetch(API_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
                         body: JSON.stringify(data),
                         mode: 'cors'
                     });
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error || 'Erro no servidor.');
+                        throw new Error(errorData.error || `Erro no servidor: ${response.statusText}`);
                     }
 
                     const result = await response.json();
-                    const petitionText = result.text || '';
+                    const petitionText = result.text || 'Ocorreu um erro e a IA não retornou um texto.';
 
+                    // Now, use jsPDF to create the document from the AI's response
                     const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    const doc = new jsPDF({
+                        orientation: 'p',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
 
                     const margin = 20;
                     const maxWidth = doc.internal.pageSize.width - margin * 2;
@@ -987,13 +1421,13 @@
                             cursorY = margin;
                         }
                         doc.text(line, margin, cursorY);
-                        cursorY += 7;
+                        cursorY += 7; // Line height
                     });
                     
                     doc.save('peticao.pdf');
 
                     setTimeout(() => {
-                        document.getElementById('quiz-wrapper').style.display = 'none';
+                        form.style.display = 'none';
                         resultScreen.style.display = 'block';
                     }, 500);
 
@@ -1014,34 +1448,32 @@
                 });
             });
             
-            // Navegação
+            // Event Listeners for navigation
             nextBtn.addEventListener('click', () => navigate(1));
             prevBtn.addEventListener('click', () => navigate(-1));
             
             document.getElementById('restart-quiz-btn').addEventListener('click', () => {
-                resultScreen.style.display = 'none';
-                document.getElementById('quiz-wrapper').style.display = 'block';
-                form.style.display = 'block';
-                form.reset();
-                nextBtn.textContent = 'Próximo';
-                nextBtn.disabled = false;
-                startQuiz();
+                 resultScreen.style.display = 'none';
+                 form.style.display = 'block';
+                 form.reset();
+                 startQuiz();
             });
 
             // Toggle Dano moral value input
-            const danoMoralRadio = document.querySelectorAll('input[name="dano-moral-pergunta"]');
-            const danoMoralValueGroup = document.getElementById('dano-moral-valor-group');
-            danoMoralRadio.forEach(radio => {
+             const danoMoralRadio = document.querySelectorAll('input[name="dano-moral-pergunta"]');
+             const danoMoralValueGroup = document.getElementById('dano-moral-valor-group');
+             danoMoralRadio.forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     danoMoralValueGroup.style.display = e.target.value === 'sim' ? 'block' : 'none';
                 });
-            });
+             });
 
-            // Currency formatting para inputs de valor
+
+            // Currency formatting for value inputs
             const valueInputs = ['moral-value', 'material-value'];
             valueInputs.forEach(id => {
                 const input = document.getElementById(id);
-                if (input) {
+                if(input) {
                     input.addEventListener('input', () => {
                         let value = input.value.replace(/\D/g, ''); 
                         if (value === '') {
@@ -1057,7 +1489,8 @@
                 }
             });
 
-            // Inicializa
+
+            // Initialize the quiz
             startQuiz();
         });
     </script>
