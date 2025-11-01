@@ -1490,4 +1490,32 @@
         });
     </script>
 </body>
-</html>
+<script>
+const API_URL = "https://backend-peticoes.onrender.com/api/generate-petition"; // sua API
+
+document.getElementById("petition-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    // Pega todos os campos do formulário automaticamente
+    const formData = Object.fromEntries(new FormData(this).entries());
+
+    // Mostra mensagem enquanto espera
+    const resultBox = document.getElementById("result-box");
+    resultBox.innerHTML = "Gerando a petição… aguarde";
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        resultBox.innerText = data.text || "Erro: Nenhum texto gerado.";
+    } catch (err) {
+        resultBox.innerText = "Erro na geração da petição.";
+    }
+});
+</script>
+
+
