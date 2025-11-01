@@ -1,7 +1,7 @@
 // Importação dos pacotes necessários
 import express from 'express';
 import cors from 'cors';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Inicialização do Express
 const app = express();
@@ -13,7 +13,7 @@ app.use(express.json()); // Habilita o parsing de JSON no corpo das requisiçõe
 
 // Inicialização do cliente Gemini AI
 // A API Key é pega da variável de ambiente, como manda a boa prática.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Função auxiliar para mapear os valores do formulário para texto legível
 const getProblemDescription = (data) => {
@@ -113,4 +113,5 @@ app.post('/api/generate-petition', async (req, res) => {
 // Inicia o servidor
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
+
 });
