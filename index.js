@@ -13,7 +13,7 @@ app.use(express.json()); // Habilita o parsing de JSON no corpo das requisiçõe
 
 // Inicialização do cliente Gemini AI
 // A API Key é pega da variável de ambiente, como manda a boa prática.
-const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+coconst ai = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Função auxiliar para mapear os valores do formulário para texto legível
 const getProblemDescription = (data) => {
@@ -115,4 +115,5 @@ app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);
 
 });
+
 
