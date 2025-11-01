@@ -1,0 +1,16 @@
+
+  "name": "suapeticao-backend",
+  "version": "1.0.0",
+  "description": "Backend para o gerador de petições com IA",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^1.28.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
