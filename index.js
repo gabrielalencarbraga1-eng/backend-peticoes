@@ -16,8 +16,6 @@ app.use(express.json());
 // 3. Inicialização da API Gemini
 if (!process.env.API_KEY) {
     console.error("ERRO CRÍTICO: A variável de ambiente API_KEY não foi definida no Render.");
-    // Em um ambiente de produção, poderíamos ter um sistema de alerta aqui.
-    // Por enquanto, o servidor irá falhar ao tentar usar a API, o que é um comportamento esperado.
 }
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -68,7 +66,7 @@ app.post('/api/generate-petition', async (req, res) => {
             -------------------------------------------------
 
             Agora, por favor, gere o texto completo e coeso da petição inicial.
-        `; // 
+        `;
 
         // 6. Chamada para a API do Gemini
         const response = await ai.models.generateContent({
