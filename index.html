@@ -11,7 +11,7 @@
     <style>
         :root {
             --primary-green-dark: #004d40;
-            --primary-green-medium: #26a69a; /* Tom de verde mais vibrante */
+            --primary-green-medium: #26a69a;
             --primary-green-light: #e0f2f1;
             --neutral-dark: #212121;
             --neutral-medium: #616161;
@@ -47,7 +47,6 @@
             padding: 0 20px;
         }
 
-        /* Header */
         header {
             background-color: var(--background-color);
             padding: 1rem 0;
@@ -132,7 +131,6 @@
             transition: all 0.3s ease-in-out;
         }
 
-        /* Botões */
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
@@ -148,12 +146,12 @@
         .btn-primary {
             background-color: var(--primary-green-medium);
             color: white;
-            box-shadow: 0 4px 15px rgba(0, 121, 107, 0.2);
+            box-shadow: 0 4px 15px rgba(38, 166, 154, 0.2);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 121, 107, 0.3);
+            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.3);
         }
 
         .btn-secondary {
@@ -166,8 +164,7 @@
              background-color: var(--primary-green-medium);
              color: white;
         }
-
-        /* Seções */
+        
         section {
             padding: 6rem 0;
         }
@@ -188,7 +185,6 @@
             margin: 0 auto 4rem auto;
         }
 
-        /* Hero Section */
         #hero {
             padding-top: 10rem;
             min-height: 100vh;
@@ -223,18 +219,13 @@
         
         .hero-image {
             max-width: 45%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .hero-image svg {
             width: 100%;
             height: auto;
-            max-width: 450px;
         }
 
-        /* Como Funciona */
         #how-it-works {
             background-color: var(--neutral-light);
         }
@@ -281,7 +272,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* FAQ */
         .faq-item {
             border-bottom: 1px solid #e0e0e0;
             padding: 1.5rem 0;
@@ -294,6 +284,7 @@
             cursor: pointer;
             font-size: 1.2rem;
             font-weight: 600;
+            transition: color 0.3s ease;
         }
         
         .faq-question:hover {
@@ -303,15 +294,14 @@
         .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.4s ease-in-out;
             color: var(--neutral-medium);
         }
         
         .faq-answer p {
              padding-top: 1rem;
-             padding-bottom: 1rem;
         }
-
+        
         .faq-toggle {
             font-size: 1.5rem;
             font-weight: bold;
@@ -322,7 +312,6 @@
             transform: rotate(45deg);
         }
 
-        /* Formulário Quiz */
         #form-section {
             background-color: var(--neutral-light);
         }
@@ -414,71 +403,66 @@
             flex-direction: column;
             gap: 1rem;
         }
+        
+        .checkbox-options {
+             display: grid;
+             grid-template-columns: 1fr 1fr;
+             gap: 1rem;
+        }
 
-        .options-grid label,
-        .radio-options label,
-        .checkbox-options label {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .radio-option-label,
+        .checkbox-option-label {
+            display: block;
             cursor: pointer;
             font-weight: 500;
-            padding: 0.8rem 1.5rem;
+            padding: 1rem 1.5rem;
             border: 1px solid #ccc;
             border-radius: 8px;
             transition: all 0.2s ease;
-            text-align: left;
+            position: relative;
         }
-        .options-grid label:hover,
-        .radio-options label:hover,
-        .checkbox-options label:hover {
+
+        .radio-option-label:hover,
+        .checkbox-option-label:hover {
             background-color: var(--primary-green-light);
             border-color: var(--primary-green-medium);
         }
 
-        .options-grid input[type="radio"],
-        .radio-options input[type="radio"],
-        .checkbox-options input[type="checkbox"] {
+        input[type="radio"],
+        input[type="checkbox"] {
            display: none;
         }
         
-        .options-grid input[type="radio"]:checked ~ span,
-        .radio-options input[type="radio"]:checked ~ span,
-        .checkbox-options input[type="checkbox"]:checked ~ span {
+        input[type="radio"]:checked + .radio-option-label,
+        input[type="checkbox"]:checked + .checkbox-option-label {
+            border-color: var(--primary-green-medium);
+            background-color: var(--primary-green-light);
             font-weight: 600;
             color: var(--primary-green-dark);
         }
         
-        .options-grid input[type="radio"]:checked ~ span::before,
-        .radio-options input[type="radio"]:checked ~ span::before,
-        .checkbox-options input[type="checkbox"]:checked ~ span::before {
+        input[type="radio"]:checked + .radio-option-label::before,
+        input[type="checkbox"]:checked + .checkbox-option-label::before {
              content: '✔';
-             margin-right: 0.5rem;
+             margin-right: 0.75rem;
              color: var(--primary-green-medium);
+             font-weight: bold;
         }
         
-        .options-grid input[type="radio"]:checked + label,
-        .radio-options input[type="radio"]:checked + label,
-        .checkbox-options input[type="checkbox"]:checked + label {
-            border-color: var(--primary-green-medium);
-            background-color: var(--primary-green-light);
+        .form-group.invalid .radio-options,
+        .form-group.invalid .checkbox-options,
+        .form-group.invalid .options-grid {
+            border: 1px solid var(--error-color);
+            background-color: var(--error-background);
+            border-radius: 8px;
+            padding: 1rem;
         }
-
 
         .form-group.invalid input,
         .form-group.invalid select,
         .form-group.invalid textarea {
             border: 1px solid var(--error-color);
             background-color: var(--error-background);
-        }
-        
-        .form-group.invalid .options-grid,
-        .form-group.invalid .radio-options,
-        .form-group.invalid .checkbox-options {
-            border: 1px solid var(--error-color);
-            background-color: var(--error-background);
-            border-radius: 8px;
-            padding: 1rem;
         }
 
         .error-message {
@@ -524,6 +508,8 @@
             display: flex;
             justify-content: space-between;
             margin-top: 3rem;
+            border-top: 1px solid #eee;
+            padding-top: 2rem;
         }
         
         .quiz-navigation button {
@@ -551,14 +537,21 @@
             text-align: left;
             display: inline-block;
             margin-bottom: 2.5rem;
+            background-color: var(--neutral-light);
+            padding: 2rem;
+            border-radius: 8px;
         }
         
         #result-screen ul li {
             font-size: 1.1rem;
             margin-bottom: 1rem;
+            color: var(--neutral-dark);
+        }
+        
+        #result-screen ul li:last-child {
+            margin-bottom: 0;
         }
 
-        /* Rodapé */
         footer {
             background-color: var(--primary-green-dark);
             color: white;
@@ -589,11 +582,11 @@
             color: var(--primary-green-medium);
         }
 
-        /* Responsividade */
         @media (max-width: 992px) {
             .hero-content {
                 flex-direction: column;
                 text-align: center;
+                gap: 2rem;
             }
             .hero-text, .hero-image {
                 max-width: 100%;
@@ -605,13 +598,22 @@
         
         @media (max-width: 768px) {
             html {
-                font-size: 93.75%; /* 15px */
+                font-size: 93.75%;
+            }
+            section {
+                padding: 4rem 0;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .hero-text h1 {
+                font-size: 2.5rem;
             }
             
             nav ul {
                 position: fixed;
                 left: -100%;
-                top: 73px; /* Altura do header */
+                top: 65px;
                 flex-direction: column;
                 background-color: white;
                 width: 100%;
@@ -629,7 +631,7 @@
                 width: 100%;
             }
 
-            nav a {
+            nav a:not(.btn) {
                 padding: 1.5rem 1rem;
                 display: block;
                 width: 100%;
@@ -637,8 +639,7 @@
             }
 
             .btn-nav {
-                margin: 1rem;
-                display: block;
+                display: none;
             }
             
             nav a:not(.btn)::after {
@@ -662,6 +663,10 @@
             .form-container {
                 padding: 2rem;
             }
+            
+            .checkbox-options {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 <script type="importmap">
@@ -683,9 +688,7 @@
                 <ul class="nav-menu">
                     <li><a href="#how-it-works">Como funciona</a></li>
                     <li><a href="#faq">Perguntas frequentes</a></li>
-                    <li><a href="#">Contato</a></li>
-                    <li><a href="#">Meu perfil</a></li>
-                    <li><a href="#form-section" class="btn btn-secondary btn-nav">Criar Petição</a></li>
+                    <li><a href="#form-section" class="btn btn-primary btn-nav">Criar Petição Agora</a></li>
                 </ul>
             </nav>
              <button class="hamburger">
@@ -705,18 +708,9 @@
                     <a href="#form-section" class="btn btn-primary">Criar Petição Agora</a>
                 </div>
                 <div class="hero-image">
-                    <svg width="495" height="495" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="1" y="1" width="198" height="198" rx="10" fill="var(--neutral-light)" fill-opacity="0.2"></rect>
-                        <path d="M62 41C62 38.7909 63.7909 37 66 37H134C136.209 37 138 38.7909 138 41V159C138 161.209 136.209 163 134 163H66C63.7909 163 62 161.209 62 159V41Z" fill="white" stroke="var(--primary-green-dark)" stroke-width="2"></path>
-                        <rect x="74" y="52" width="52" height="4" rx="2" fill="var(--primary-green-light)"></rect>
-                        <rect x="74" y="66" width="52" height="2" rx="1" fill="#E0E0E0"></rect>
-                        <rect x="74" y="74" width="52" height="2" rx="1" fill="#E0E0E0"></rect>
-                        <rect x="74" y="82" width="52" height="2" rx="1" fill="#E0E0E0"></rect>
-                        <rect x="74" y="90" width="32" height="2" rx="1" fill="#E0E0E0"></rect>
-                        <circle cx="118" cy="138" r="18" fill="var(--primary-green-medium)"></circle>
-                        <path d="M112 138L116.5 142.5L124 133.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M93.9989 110.126C93.9443 109.682 94.3168 109.261 94.7663 109.261H96.4027C96.9535 109.261 97.4027 109.71 97.4027 110.261V112.261C97.4027 112.812 96.9535 113.261 96.4027 113.261H94.7663C94.3168 113.261 93.9443 112.84 93.9989 112.396L94.5085 111.261L93.9989 110.126Z" fill="var(--primary-green-dark)"></path>
-                        <path d="M102.001 112.396C102.056 112.84 101.683 113.261 101.234 113.261H99.5973C99.0465 113.261 98.5973 112.812 98.5973 112.261V110.261C98.5973 109.71 99.0465 109.261 99.5973 109.261H101.234C101.683 109.261 102.056 109.682 102.001 110.126L101.492 111.261L102.001 112.396Z" fill="var(--primary-green-dark)"></path>
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="#26A69A" d="M49.3,-58.9C62.1,-48.9,70,-32.8,74.1,-15.5C78.2,1.8,78.5,20.3,69.9,34.4C61.3,48.5,43.8,58.2,26.5,65.5C9.2,72.8,-7.9,77.7,-24.1,73.8C-40.3,69.9,-55.6,57.1,-65.3,41.6C-75,26,-79.1,7.6,-76.3,-9.6C-73.5,-26.8,-63.9,-42.8,-50.8,-53.1C-37.7,-63.4,-21.1,-68,-4.3,-66.1C12.5,-64.2,25.1,-66.8,36.3,-65.1C47.5,-63.4,51.8,-58,49.3,-58.9Z" transform="translate(100 100)" />
+                        <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="Poppins, sans-serif" font-size="70" fill="white" font-weight="600">IA</text>
                     </svg>
                 </div>
             </div>
@@ -725,22 +719,22 @@
         <section id="how-it-works">
             <div class="container">
                 <h2 class="section-title">Como Funciona?</h2>
-                <p class="section-subtitle">Em três passos simples, sua petição estará pronta para ser protocolada.</p>
+                <p class="section-subtitle">Em 3 passos simples, você transforma seu problema em um documento jurídico pronto para usar.</p>
                 <div class="steps-container">
                     <div class="step-card">
                         <div class="step-number">1</div>
-                        <h3>Preencha o Formulário</h3>
-                        <p>Informe os detalhes do seu caso de forma guiada e intuitiva. Nossa plataforma pergunta tudo o que é necessário.</p>
+                        <h3>Responda o Quiz</h3>
+                        <p>Conte o que aconteceu respondendo a um questionário dinâmico e inteligente.</p>
                     </div>
                     <div class="step-card">
                         <div class="step-number">2</div>
-                        <h3>A IA Monta a Petição</h3>
-                        <p>Nossa Inteligência Artificial analisa suas informações e redige uma petição inicial completa, em linguagem jurídica e formatada corretamente.</p>
+                        <h3>IA Gera a Petição</h3>
+                        <p>Nossa Inteligência Artificial analisa suas respostas e redige o documento completo.</p>
                     </div>
                     <div class="step-card">
                         <div class="step-number">3</div>
-                        <h3>Imprima e Protocole</h3>
-                        <p>Você recebe o documento pronto para imprimir, assinar e levar ao Juizado Especial Cível da sua cidade, junto com seus documentos.</p>
+                        <h3>Baixe e Protocole</h3>
+                        <p>Receba sua petição em PDF, junte seus documentos e leve ao Juizado Especial.</p>
                     </div>
                 </div>
             </div>
@@ -750,388 +744,293 @@
             <div class="container">
                 <h2 class="section-title">Crie Sua Petição</h2>
                 <p class="section-subtitle">Responda algumas perguntas e nossa IA montará o documento para você.</p>
+                
                 <div class="form-container" id="quiz-wrapper">
                     
-                    <div id="result-screen" style="display: none;">
+                    <div id="result-screen" class="quiz-step" data-step-id="result-screen">
                         <h3>Petição Gerada com Sucesso!</h3>
                         <p>Seu documento foi baixado. Siga os próximos passos para protocolar sua ação:</p>
                         <ul>
-                            <li>✅ Abra o arquivo 'peticao.pdf' que foi salvo no seu computador.</li>
+                            <li>✅ Abra o arquivo 'peticao.pdf' que foi salvo.</li>
                             <li>✅ Imprima 3 vias do documento.</li>
-                            <li>✅ Junte cópias dos seus documentos pessoais (RG, CPF, Comprovante de Residência).</li>
-                            <li>✅ Anexe todas as provas que você mencionou (notas fiscais, protocolos, prints, etc).</li>
-                            <li>✅ Leve toda a documentação ao balcão do Juizado Especial Cível (JEC) da sua cidade.</li>
+                            <li>✅ Junte cópias dos seus documentos (RG, CPF, Comprovante de Residência).</li>
+                            <li>✅ Anexe todas as provas que você mencionou (notas, protocolos, etc).</li>
+                            <li>✅ Leve tudo ao balcão do Juizado Especial Cível (JEC) da sua cidade.</li>
                         </ul>
                         <button type="button" id="restart-quiz-btn" class="btn btn-primary">Começar Novamente</button>
                     </div>
 
                     <form id="petition-form" novalidate>
                         <div class="progress-container">
-                             <div class="progress-bar-track">
+                            <div class="progress-bar-track">
                                 <div class="progress-bar-fill"></div>
                             </div>
                             <p class="progress-text">Pergunta 1 de N</p>
                         </div>
 
-                        <!-- STEP: Problem Type -->
+                        <!-- Passo 1: Tipo de Problema -->
                         <div class="quiz-step" data-step-id="problem-type">
-                             <h3 class="quiz-question">Para começar, qual o seu problema com a concessionária de energia?</h3>
-                             <div class="form-group">
-                                <div class="options-grid">
-                                    <label><input type="radio" name="problem-type" value="corte_energia" required><span>Corte indevido de energia</span></label>
-                                    <label><input type="radio" name="problem-type" value="danos_eletricos" required><span>Oscilação/queda que danificou aparelhos</span></label>
-                                    <label><input type="radio" name="problem-type" value="toi" required><span>Multa / TOI indevido</span></label>
-                                    <label><input type="radio" name="problem-type" value="recusa_ligacao" required><span>Recusa na ligação de nova energia</span></label>
-                                    <label><input type="radio" name="problem-type" value="cobranca_indevida" required><span>Cobrança indevida na conta</span></label>
-                                    <label><input type="radio" name="problem-type" value="outro" required><span>Outro problema</span></label>
+                            <h3 class="quiz-question">Qual é o seu problema principal com a empresa de energia?</h3>
+                            <div class="form-group">
+                                <div class="radio-options options-grid">
+                                    <input type="radio" id="corte_energia" name="problem-type" value="corte_energia" required>
+                                    <label for="corte_energia" class="radio-option-label">Corte indevido de energia</label>
+
+                                    <input type="radio" id="danos_eletricos" name="problem-type" value="danos_eletricos" required>
+                                    <label for="danos_eletricos" class="radio-option-label">Oscilação/queda que danificou aparelhos</label>
+
+                                    <input type="radio" id="toi" name="problem-type" value="toi" required>
+                                    <label for="toi" class="radio-option-label">Multa / TOI indevido</label>
+
+                                    <input type="radio" id="recusa_ligacao" name="problem-type" value="recusa_ligacao" required>
+                                    <label for="recusa_ligacao" class="radio-option-label">Recusa na ligação de nova energia</label>
+
+                                    <input type="radio" id="cobranca_indevida" name="problem-type" value="cobranca_indevida" required>
+                                    <label for="cobranca_indevida" class="radio-option-label">Cobrança indevida na conta</label>
                                 </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                 <div class="error-message">Por favor, selecione uma opção.</div>
                             </div>
                         </div>
 
-                        <!-- STEP: Author Info -->
-                         <div class="quiz-step" data-step-id="author-info">
-                            <h3 class="quiz-question">Ótimo. Agora, vamos aos seus dados. Qual é o seu nome completo?</h3>
-                             <div class="form-group">
-                                <input type="text" id="author-name" name="author-name" required placeholder="Digite seu nome completo">
-                                <div class="error-message">Campo obrigatório.</div>
+                        <!-- Passos de Identificação -->
+                        <div class="quiz-step" data-step-id="author-info">
+                            <h3 class="quiz-question">Qual é o seu nome completo?</h3>
+                            <div class="form-group">
+                                <label for="author-name">Nome Completo</label>
+                                <input type="text" id="author-name" name="author-name" placeholder="Digite seu nome completo" required>
+                                <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
+
                         <div class="quiz-step" data-step-id="author-cpf">
-                            <h3 class="quiz-question">E o seu CPF?</h3>
+                             <h3 class="quiz-question">Qual o seu CPF?</h3>
                              <div class="form-group">
-                                <input type="text" id="author-cpf" name="author-cpf" required placeholder="Digite seu CPF">
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                         <div class="quiz-step" data-step-id="author-address">
-                            <h3 class="quiz-question">Qual seu endereço completo?</h3>
-                             <div class="form-group">
-                                <input type="text" id="author-address" name="author-address" required placeholder="Rua, número, bairro, cidade e estado">
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="author-contact">
-                            <h3 class="quiz-question">Para finalizar seus dados, qual seu e-mail e telefone?</h3>
-                             <div class="form-group">
-                                <input type="email" id="author-email" name="author-email" required placeholder="seuemail@exemplo.com">
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                             <div class="form-group">
-                                <input type="tel" id="author-phone" name="author-phone" required placeholder="(XX) XXXXX-XXXX">
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="author-cpf">CPF</label>
+                                <input type="text" id="author-cpf" name="author-cpf" placeholder="000.000.000-00" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
 
-                        <!-- STEP: Company Info -->
-                         <div class="quiz-step" data-step-id="company-info">
-                            <h3 class="quiz-question">Contra qual concessionária de energia é o processo?</h3>
+                        <div class="quiz-step" data-step-id="author-address">
+                            <h3 class="quiz-question">Seu endereço completo?</h3>
+                            <div class="form-group">
+                                <label for="author-address">Endereço com rua, número, bairro, cidade e estado</label>
+                                <input type="text" id="author-address" name="author-address" placeholder="Ex: Rua das Flores, 123, Centro, Salvador - BA" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-step" data-step-id="author-contact">
+                             <h3 class="quiz-question">Qual seu e-mail e telefone para contato?</h3>
                              <div class="form-group">
-                                <input type="text" id="company-name" name="company-name" required placeholder="Ex: Enel, Neoenergia, Coelba, etc.">
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="author-email">E-mail</label>
+                                <input type="email" id="author-email" name="author-email" placeholder="seuemail@exemplo.com" required>
+                                 <div class="error-message">Digite um e-mail válido.</div>
+                            </div>
+                             <div class="form-group">
+                                <label for="author-phone">Telefone / WhatsApp</label>
+                                <input type="tel" id="author-phone" name="author-phone" placeholder="(71) 99999-9999" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
+                            </div>
+                        </div>
+
+                        <!-- Informações da Empresa -->
+                        <div class="quiz-step" data-step-id="company-info">
+                            <h3 class="quiz-question">Qual o nome da concessionária de energia?</h3>
+                             <div class="form-group">
+                                <label for="company-name">Nome da empresa</label>
+                                <input type="text" id="company-name" name="company-name" placeholder="Ex: Neoenergia Coelba, Enel, Light, etc." required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
                         
-                        <!-- DYNAMIC BLOCKS START HERE -->
-
-                        <!-- ## CORTE INDEVIDO BLOCK ## -->
+                        <!-- Bloco: Corte de Energia -->
                         <div class="quiz-step" data-step-id="corte-data">
-                            <h3 class="quiz-question">Em que data a sua energia foi cortada?</h3>
+                             <h3 class="quiz-question">Em que data a sua energia foi cortada?</h3>
                              <div class="form-group">
-                                <input type="date" id="corte-data-input" name="corte-data" required>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="corte-data-input">Data do corte</label>
+                                <input type="date" id="corte-data-input" name="corte-data-input" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
                         <div class="quiz-step" data-step-id="corte-aviso">
-                            <h3 class="quiz-question">A empresa avisou com antecedência que iria cortar?</h3>
+                             <h3 class="quiz-question">A empresa avisou com antecedência que iria cortar?</h3>
                              <div class="form-group">
                                 <div class="radio-options">
-                                    <label><input type="radio" name="corte-aviso" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="corte-aviso" value="nao" required><span>Não</span></label>
+                                    <input type="radio" id="corte-aviso-sim" name="corte-aviso" value="sim" required>
+                                    <label for="corte-aviso-sim" class="radio-option-label">Sim</label>
+                                    <input type="radio" id="corte-aviso-nao" name="corte-aviso" value="nao" required>
+                                    <label for="corte-aviso-nao" class="radio-option-label">Não</label>
                                 </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
+                                 <div class="error-message">Por favor, selecione uma opção.</div>
+                             </div>
                         </div>
-                        <div class="quiz-step" data-step-id="corte-divida">
-                            <h3 class="quiz-question">Você tinha alguma conta em atraso no dia do corte?</h3>
-                            <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="corte-divida" value="nao" required><span>Não, todas as contas estavam pagas</span></label>
-                                    <label><input type="radio" name="corte-divida" value="sim_indevida" required><span>Sim, mas a cobrança era indevida</span></label>
-                                    <label><input type="radio" name="corte-divida" value="discordo" required><span>Não concordo com a dívida que eles alegam</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="corte-religacao">
-                            <h3 class="quiz-question">Quando a energia foi religada (se já foi)?</h3>
-                            <div class="form-group">
-                                <input type="date" id="corte-religacao-data" name="corte-religacao-data">
-                                <p style="text-align:center; margin-top: 1rem;">Se ainda não foi religada, pode deixar em branco.</p>
-                            </div>
-                        </div>
-                         <div class="quiz-step" data-step-id="corte-prejuizo-pergunta">
-                            <h3 class="quiz-question">Você teve algum prejuízo com alimentos estragados, medicamentos, perda de trabalho, etc?</h3>
-                             <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="corte-prejuizo-pergunta" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="corte-prejuizo-pergunta" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="corte-prejuizo-detalhes">
-                            <h3 class="quiz-question">Pode nos contar quais foram os prejuízos e o valor estimado?</h3>
-                            <div class="form-group">
-                                <textarea name="corte-prejuizo-detalhes" placeholder="Ex: Perdi R$200,00 em carnes e laticínios na geladeira."></textarea>
-                            </div>
-                        </div>
-
-                        <!-- ## OSCILAÇÃO / DANOS ELÉTRICOS BLOCK ## -->
+                        
+                        <!-- Bloco: Oscilação / Danos -->
                         <div class="quiz-step" data-step-id="oscilacao-data">
-                            <h3 class="quiz-question">Qual foi o dia da oscilação ou queda de energia que causou os danos?</h3>
+                             <h3 class="quiz-question">Qual foi o dia da oscilação ou queda de energia?</h3>
                              <div class="form-group">
-                                <input type="date" id="oscilacao-data-input" name="oscilacao-data" required>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
+                                <label for="oscilacao-data-input">Data do ocorrido</label>
+                                <input type="date" id="oscilacao-data-input" name="oscilacao-data-input" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
+                             </div>
                         </div>
-                         <div class="quiz-step" data-step-id="oscilacao-equipamentos">
+                        <div class="quiz-step" data-step-id="oscilacao-equipamentos">
                             <h3 class="quiz-question">Quais equipamentos foram danificados?</h3>
                             <div class="form-group">
-                                <textarea name="oscilacao-equipamentos" required placeholder="Liste os equipamentos com marca, modelo e valor aproximado. Ex: TV Samsung 50 polegadas (R$ 2.500,00), Geladeira Brastemp (R$ 3.000,00)."></textarea>
-                                 <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="oscilacao-comunicacao">
-                            <h3 class="quiz-question">Você comunicou o problema à empresa?</h3>
-                             <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="oscilacao-comunicacao" value="sim" required><span>Sim, e anotei o protocolo</span></label>
-                                    <label><input type="radio" name="oscilacao-comunicacao" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="oscilacao-protocolo">
-                            <h3 class="quiz-question">Qual o número do protocolo e a data?</h3>
-                            <div class="form-group">
-                                <input type="text" name="oscilacao-protocolo" placeholder="Número do protocolo de atendimento">
+                                <label for="oscilacao-equipamentos-input">Descreva os equipamentos (marca, modelo, valor)</label>
+                                <textarea id="oscilacao-equipamentos-input" name="oscilacao-equipamentos-input" placeholder="Ex: TV Samsung 50 polegadas (R$ 2.500), Geladeira Brastemp (R$ 3.000)" required></textarea>
+                                <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
 
-                        <!-- ## TOI / MULTA BLOCK ## -->
+                        <!-- Bloco: TOI -->
                         <div class="quiz-step" data-step-id="toi-numero">
-                            <h3 class="quiz-question">Qual é o número do TOI (Termo de Ocorrência e Inspeção), se você tiver?</h3>
-                             <div class="form-group">
-                                <input type="text" id="toi-numero-input" name="toi-numero" placeholder="Pode deixar em branco se não tiver">
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="toi-data">
-                            <h3 class="quiz-question">Qual foi a data da vistoria ou da emissão do TOI?</h3>
+                            <h3 class="quiz-question">Qual o número do TOI (Termo de Ocorrência e Inspeção)?</h3>
                             <div class="form-group">
-                                <input type="date" id="toi-data-input" name="toi-data" required>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="toi-presente">
-                            <h3 class="quiz-question">Você estava presente no momento da vistoria?</h3>
-                            <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="toi-presente" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="toi-presente" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="toi-numero-input">Número do TOI (se houver)</label>
+                                <input type="text" id="toi-numero-input" name="toi-numero-input">
                             </div>
                         </div>
                          <div class="quiz-step" data-step-id="toi-cobranca">
-                            <h3 class="quiz-question">Após o TOI, houve corte de energia, ameaça de corte ou cobrança da multa?</h3>
+                            <h3 class="quiz-question">Houve cobrança, corte ou ameaça de corte de energia por causa do TOI?</h3>
                             <div class="form-group">
-                                 <div class="radio-options">
-                                    <label><input type="radio" name="toi-cobranca" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="toi-cobranca" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="toi-cobranca-input">Descreva o que aconteceu</label>
+                                <textarea id="toi-cobranca-input" name="toi-cobranca-input" placeholder="Ex: Recebi uma fatura de R$ 5.000 e ameaçaram cortar minha luz." required></textarea>
+                                 <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
                         
-                        <!-- ## RECUSA DE LIGAÇÃO NOVA BLOCK ## -->
-                        <div class="quiz-step" data-step-id="recusa-data-solicitacao">
-                            <h3 class="quiz-question">Em que data você fez a solicitação da nova ligação de energia?</h3>
+                        <!-- Bloco: Recusa de Ligação -->
+                         <div class="quiz-step" data-step-id="recusa-data-solicitacao">
+                            <h3 class="quiz-question">Em que data você pediu a nova ligação de energia?</h3>
                             <div class="form-group">
-                                <input type="date" name="recusa-data-solicitacao" required>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="recusa-data-input">Data da solicitação</label>
+                                <input type="date" id="recusa-data-input" name="recusa-data-input" required>
+                                <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
                         <div class="quiz-step" data-step-id="recusa-motivo">
-                            <h3 class="quiz-question">A empresa informou o motivo para recusar a ligação? Se sim, qual foi?</h3>
+                            <h3 class="quiz-question">A empresa informou o motivo da recusa?</h3>
                             <div class="form-group">
-                                <textarea name="recusa-motivo" placeholder="Descreva o motivo informado pela empresa, se houver."></textarea>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="recusa-protocolo">
-                            <h3 class="quiz-question">Você tem algum número de protocolo desse atendimento?</h3>
-                            <div class="form-group">
-                                <input type="text" name="recusa-protocolo" placeholder="Digite o protocolo, se tiver.">
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="recusa-moradores">
-                            <h3 class="quiz-question">Há pessoas morando no imóvel que está sem energia?</h3>
-                            <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="recusa-moradores" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="recusa-moradores" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="recusa-motivo-input">Qual foi o motivo? (Se souber)</label>
+                                <textarea id="recusa-motivo-input" name="recusa-motivo-input" placeholder="Ex: Disseram que havia um débito antigo no meu CPF, mas eu não reconheço a dívida."></textarea>
                             </div>
                         </div>
 
-                        <!-- ## COBRANÇA INDEVIDA BLOCK ## -->
+                        <!-- Bloco: Cobrança Indevida -->
                         <div class="quiz-step" data-step-id="cobranca-tipo">
-                            <h3 class="quiz-question">Qual tipo de cobrança indevida você recebeu?</h3>
+                            <h3 class="quiz-question">Que tipo de cobrança indevida você recebeu?</h3>
                             <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="cobranca-tipo" value="conta_acima" required><span>Conta com valor muito acima do normal</span></label>
-                                    <label><input type="radio" name="cobranca-tipo" value="debito_inexistente" required><span>Débito que você não reconhece</span></label>
-                                    <label><input type="radio" name="cobranca-tipo" value="cobranca_repetida" required><span>Cobrança de uma conta que já foi paga</span></label>
-                                    <label><input type="radio" name="cobranca-tipo" value="tarifa_irregular" required><span>Inclusão de alguma tarifa ou serviço irregular</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                <label for="cobranca-tipo-input">Descreva a cobrança</label>
+                                <textarea id="cobranca-tipo-input" name="cobranca-tipo-input" placeholder="Ex: Minha conta de luz, que normalmente é R$ 150, veio R$ 900 sem nenhuma explicação." required></textarea>
+                                <div class="error-message">Este campo é obrigatório.</div>
                             </div>
                         </div>
-                        <div class="quiz-step" data-step-id="cobranca-reclamacao">
-                            <h3 class="quiz-question">Você chegou a reclamar com a empresa sobre essa cobrança?</h3>
-                            <div class="form-group">
-                                <div class="radio-options">
-                                    <label><input type="radio" name="cobranca-reclamacao" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="cobranca-reclamacao" value="nao" required><span>Não</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="cobranca-protocolos">
-                            <h3 class="quiz-question">Poderia informar os protocolos de reclamação?</h3>
-                            <div class="form-group">
-                                <textarea name="cobranca-protocolos" placeholder="Digite aqui os números de protocolo que você anotou."></textarea>
-                            </div>
-                        </div>
-                        <div class="quiz-step" data-step-id="cobranca-negativacao">
+                         <div class="quiz-step" data-step-id="cobranca-negativacao">
                             <h3 class="quiz-question">Por causa dessa cobrança, seu nome foi negativado (SPC/Serasa)?</h3>
-                            <div class="form-group">
+                             <div class="form-group">
                                 <div class="radio-options">
-                                    <label><input type="radio" name="cobranca-negativacao" value="sim" required><span>Sim</span></label>
-                                    <label><input type="radio" name="cobranca-negativacao" value="nao" required><span>Não</span></label>
+                                    <input type="radio" id="cobranca-negativacao-sim" name="cobranca-negativacao" value="sim" required>
+                                    <label for="cobranca-negativacao-sim" class="radio-option-label">Sim</label>
+                                    <input type="radio" id="cobranca-negativacao-nao" name="cobranca-negativacao" value="nao" required>
+                                    <label for="cobranca-negativacao-nao" class="radio-option-label">Não</label>
                                 </div>
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
+                                 <div class="error-message">Por favor, selecione uma opção.</div>
+                             </div>
                         </div>
 
-                        <!-- ## DYNAMIC BLOCKS END HERE ## -->
 
-                        <!-- STEP: Evidence -->
+                        <!-- Passos Finais -->
                         <div class="quiz-step" data-step-id="provas-gerais">
-                             <h3 class="quiz-question">Quais provas você tem para juntar ao processo?</h3>
-                             <p class="section-subtitle" style="margin-bottom: 2rem; margin-top: -1.5rem;">Marque tudo o que você tiver. Quanto mais provas, melhor.</p>
-                             <div class="form-group">
-                                 <div class="checkbox-options options-grid">
-                                    <label><input type="checkbox" name="provas" value="conta_energia"><span>Conta de energia</span></label>
-                                    <label><input type="checkbox" name="provas" value="protocolo"><span>Protocolo de atendimento</span></label>
-                                    <label><input type="checkbox" name="provas" value="fotos_videos"><span>Fotos / vídeos</span></label>
-                                    <label><input type="checkbox" name="provas" value="prints"><span>Prints do app/site</span></label>
-                                    <label><input type="checkbox" name="provas" value="orcamentos_notas"><span>Orçamentos / notas fiscais</span></label>
-                                    <label><input type="checkbox" name="provas" value="contrato"><span>Contrato / número da instalação</span></label>
+                            <h3 class="quiz-question">Quais provas ou documentos você possui?</h3>
+                            <div class="form-group">
+                                <div class="checkbox-options">
+                                    <input type="checkbox" id="prova-conta" name="provas" value="Conta de energia">
+                                    <label for="prova-conta" class="checkbox-option-label">Conta de energia</label>
+
+                                    <input type="checkbox" id="prova-protocolo" name="provas" value="Protocolo de atendimento">
+                                    <label for="prova-protocolo" class="checkbox-option-label">Protocolo de atendimento</label>
+
+                                    <input type="checkbox" id="prova-fotos" name="provas" value="Fotos ou vídeos">
+                                    <label for="prova-fotos" class="checkbox-option-label">Fotos ou vídeos</label>
+
+                                    <input type="checkbox" id="prova-prints" name="provas" value="Prints do app/site">
+                                    <label for="prova-prints" class="checkbox-option-label">Prints do app/site</label>
+                                    
+                                    <input type="checkbox" id="prova-orcamento" name="provas" value="Orçamentos ou notas fiscais">
+                                    <label for="prova-orcamento" class="checkbox-option-label">Orçamentos/Notas Fiscais</label>
+
+                                    <input type="checkbox" id="prova-laudo" name="provas" value="Laudo técnico">
+                                    <label for="prova-laudo" class="checkbox-option-label">Laudo técnico</label>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- STEP: Damages & Values -->
+
                         <div class="quiz-step" data-step-id="valores-pedidos">
-                             <h3 class="quiz-question">Você quer pedir alguma indenização?</h3>
-                             <div class="form-group">
-                                <label for="material-value">Qual o valor total do seu prejuízo material (se houver)?</label>
+                            <h3 class="quiz-question">Vamos falar sobre os valores.</h3>
+                            <div class="form-group">
+                                <label for="material-value">Qual o valor total aproximado do seu prejuízo material? (Se houver)</label>
                                 <input type="text" id="material-value" name="material-value" placeholder="R$ 0,00">
-                                <p style="font-size: 0.8rem; color: var(--neutral-medium); margin-top: 4px;">Soma de tudo que você gastou e pode comprovar.</p>
                             </div>
                              <div class="form-group">
-                                 <label>Você quer pedir indenização por danos morais?</label>
-                                 <p style="font-size: 0.8rem; color: var(--neutral-medium); margin-bottom: 8px;">Pelo constrangimento, tempo perdido e sofrimento.</p>
-                                 <div class="radio-options">
-                                     <label><input type="radio" name="dano-moral-pergunta" value="sim" required><span>Sim</span></label>
-                                     <label><input type="radio" name="dano-moral-pergunta" value="nao" required><span>Não</span></label>
-                                 </div>
-                                 <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                            <div class="form-group" id="dano-moral-valor-group" style="display: none;">
-                                <label for="moral-value">Qual valor você sugere para os danos morais? (opcional)</label>
-                                <input type="text" id="moral-value" name="moral-value" placeholder="R$ 0,00">
+                                <label>Quer pedir indenização por danos morais?</label>
+                                <div class="radio-options">
+                                    <input type="radio" id="dano-moral-sim" name="dano-moral-pergunta" value="sim" required>
+                                    <label for="dano-moral-sim" class="radio-option-label">Sim</label>
+                                    <input type="radio" id="dano-moral-nao" name="dano-moral-pergunta" value="nao" required>
+                                    <label for="dano-moral-nao" class="radio-option-label">Não</label>
+                                </div>
+                                <div class="error-message">Por favor, selecione uma opção.</div>
                             </div>
                         </div>
 
-                        <!-- STEP: Final Info -->
                         <div class="quiz-step" data-step-id="info-finais">
                              <h3 class="quiz-question">Estamos quase no fim! Em qual cidade e estado você vai entrar com a ação?</h3>
                              <div class="form-group">
-                                <input type="text" id="cidade-estado" name="cidade-estado" required placeholder="Ex: São Paulo, SP">
-                                <div class="error-message">Campo obrigatório.</div>
-                            </div>
-                             <h3 class="quiz-question" style="font-size: 1.5rem; margin-top: 2rem;">Deseja pedir uma decisão urgente (liminar)?</h3>
-                             <p class="section-subtitle" style="margin-bottom: 2rem; margin-top: -1.5rem;">Ex: religação imediata da energia, suspensão da cobrança do TOI, etc.</p>
+                                 <label for="action-city-state">Cidade e Estado</label>
+                                 <input type="text" id="action-city-state" name="action-city-state" placeholder="Ex: Salvador, BA" required>
+                                 <div class="error-message">Este campo é obrigatório.</div>
+                             </div>
                              <div class="form-group">
-                                <div class="radio-options">
-                                     <label><input type="radio" name="urgency-request" value="sim" required><span>Sim, preciso de uma decisão rápida</span></label>
-                                     <label><input type="radio" name="urgency-request" value="nao" required><span>Não, posso aguardar</span></label>
-                                </div>
-                                <div class="error-message">Campo obrigatório.</div>
+                                 <label>Deseja pedir uma decisão urgente (liminar)?</label>
+                                 <p style="font-size: 0.9rem; color: var(--neutral-medium); margin-top: -0.5rem; margin-bottom: 0.5rem;">Ex: religação imediata da energia, suspensão da cobrança do TOI, etc.</p>
+                                 <div class="radio-options">
+                                    <input type="radio" id="liminar-sim" name="liminar-pergunta" value="sim" required>
+                                    <label for="liminar-sim" class="radio-option-label">Sim, preciso de uma decisão rápida</label>
+                                    <input type="radio" id="liminar-nao" name="liminar-pergunta" value="nao" required>
+                                    <label for="liminar-nao" class="radio-option-label">Não, posso aguardar</label>
+                                 </div>
+                                 <div class="error-message">Por favor, selecione uma opção.</div>
                             </div>
                         </div>
-
-
+                        
                         <div class="quiz-navigation">
                             <button type="button" id="prevBtn" class="btn btn-secondary">Anterior</button>
                             <button type="button" id="nextBtn" class="btn btn-primary">Próximo</button>
                         </div>
-
                     </form>
                 </div>
             </div>
         </section>
 
-
         <section id="faq">
             <div class="container">
                 <h2 class="section-title">Perguntas Frequentes</h2>
-                <p class="section-subtitle">Tire suas dúvidas sobre o nosso serviço e o Juizado Especial Cível.</p>
                 <div class="faq-container">
                     <div class="faq-item">
                         <div class="faq-question">
-                            <span>O serviço substitui um advogado?</span>
+                            <span>Preciso de advogado para usar o Juizado?</span>
                             <span class="faq-toggle">+</span>
                         </div>
                         <div class="faq-answer">
-                            <p>Não. Nossa ferramenta é educativa e gera uma proposta de petição inicial com base nos seus dados. Ela não oferece consultoria jurídica nem representa você. Para causas acima de 20 salários mínimos, a presença de um advogado é obrigatória por lei.</p>
+                            <p>Para causas de até 20 salários mínimos, você não precisa de advogado. Nossa ferramenta foca em criar a petição inicial para que você mesmo possa dar entrada no processo.</p>
                         </div>
                     </div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            <span>Preciso pagar para usar?</span>
-                            <span class="faq-toggle">+</span>
-                        </div>
-                        <div class="faq-answer">
-                            <p>A geração da petição através do nosso modelo básico é gratuita. Nosso objetivo é democratizar o acesso à justiça para causas mais simples.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">
-                            <span>O que é o Juizado Especial Cível (JEC)?</span>
-                            <span class="faq-toggle">+</span>
-                        </div>
-                        <div class="faq-answer">
-                            <p>Também conhecido como "juizado de pequenas causas", é uma parte da justiça criada para resolver de forma mais rápida, simples e sem custos, causas de menor complexidade e valor, como as de direito do consumidor.</p>
-                        </div>
-                    </div>
-                    <div class="faq-item">
+                     <div class="faq-item">
                         <div class="faq-question">
                             <span>Qual o limite de valor da causa no JEC?</span>
-                            <span class="faq-toggle">+</span>
+                             <span class="faq-toggle">+</span>
                         </div>
                         <div class="faq-answer">
                             <p>O limite é de 40 salários mínimos. Contudo, para ingressar sem advogado, o limite é de 20 salários mínimos. Nossa ferramenta foca em casos dentro deste limite.</p>
@@ -1139,11 +1038,11 @@
                     </div>
                      <div class="faq-item">
                         <div class="faq-question">
-                            <span>Como calculo o valor da causa?</span>
-                            <span class="faq-toggle">+</span>
+                            <span>O serviço é gratuito?</span>
+                             <span class="faq-toggle">+</span>
                         </div>
                         <div class="faq-answer">
-                            <p>O valor da causa é a soma de todos os seus pedidos. Some os valores dos danos materiais (o que você gastou e pode comprovar) com uma estimativa razoável para os danos morais (o sofrimento que você passou).</p>
+                            <p>Sim, a geração da sua petição inicial através da nossa plataforma é totalmente gratuita. Nosso objetivo é democratizar o acesso à justiça.</p>
                         </div>
                     </div>
                 </div>
@@ -1154,374 +1053,291 @@
     <footer>
         <div class="container footer-content">
             <a href="#" class="logo">Sua<span>Petição</span></a>
-            <ul class="footer-links">
-                <li><a href="#">Termos de Uso</a></li>
-                <li><a href="#">Política de Privacidade</a></li>
-                <li><a href="#">Contato</a></li>
-            </ul>
             <p>&copy; 2024 SuaPetição. Todos os direitos reservados. Este site não presta assessoria jurídica.</p>
         </div>
     </footer>
 
-    <script type="module">
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- ATENÇÃO: COLE A URL DO SEU BACKEND AQUI ---
-            const API_URL = "https://backend-peticoes.onrender.com";
-            // ---------------------------------------------------
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Substitua esta URL pela URL do seu backend no Render
+        const API_URL = "https://SEU-BACKEND.onrender.com/api/generate-petition";
 
-            // "Acorda" o backend do Render (opcional, ajuda a reduzir atraso na 1ª chamada)
-            if (!API_URL.includes("COLE_A_URL_DO_SEU_BACKEND_AQUI")) {
-                 fetch(API_URL.replace('/api/generate-petition', '/'), { method: 'GET' }).catch(() => {});
-            }
+        // "Acorda" o backend do Render 
+        if (API_URL.includes('onrender')) {
+            fetch(API_URL.replace('/api/generate-petition', '/'), { method: 'GET' }).catch(() => {});
+        }
 
-            // Header scroll effect
-            const header = document.getElementById('main-header');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
+        const header = document.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+                if (navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
                 }
             });
+        });
 
-            // Hamburger menu
-            const hamburger = document.querySelector('.hamburger');
-            const navMenu = document.querySelector('.nav-menu');
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
-            
-            // Smooth scroll and close mobile menu
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href').substring(1);
-                    const targetElement = document.getElementById(targetId);
-
-                    if (targetElement) {
-                         targetElement.scrollIntoView({ behavior: 'smooth' });
-                    }
-
-                    if (navMenu.classList.contains('active')) {
-                        hamburger.classList.remove('active');
-                        navMenu.classList.remove('active');
-                    }
-                });
-            });
-
-            // FAQ Accordion
-            const faqItems = document.querySelectorAll('.faq-item');
-            faqItems.forEach(item => {
-                const question = item.querySelector('.faq-question');
-                question.addEventListener('click', () => {
-                    item.classList.toggle('active');
-                    const answer = item.querySelector('.faq-answer');
-                    if (item.classList.contains('active')) {
-                        answer.style.maxHeight = answer.scrollHeight + "px";
-                    } else {
-                        answer.style.maxHeight = null;
-                    }
-                });
-            });
-
-
-            // --- QUIZ LOGIC ---
-            const form = document.getElementById('petition-form');
-            const resultScreen = document.getElementById('result-screen');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const progressBarFill = document.querySelector('.progress-bar-fill');
-            const progressText = document.querySelector('.progress-text');
-            const allSteps = Array.from(document.querySelectorAll('.quiz-step'));
-            
-            const stepBlocks = {
-                corte_energia: ['corte-data', 'corte-aviso', 'corte-divida', 'corte-religacao', 'corte-prejuizo-pergunta'],
-                danos_eletricos: ['oscilacao-data', 'oscilacao-equipamentos', 'oscilacao-comunicacao'],
-                toi: ['toi-numero', 'toi-data', 'toi-presente', 'toi-cobranca'],
-                recusa_ligacao: ['recusa-data-solicitacao', 'recusa-motivo', 'recusa-protocolo', 'recusa-moradores'],
-                cobranca_indevida: ['cobranca-tipo', 'cobranca-reclamacao', 'cobranca-negativacao'],
-                outro: [] // No specific questions for 'other'
-            };
-
-            let quizFlow = [];
-            let currentStepIndex = 0;
-
-            function startQuiz() {
-                // Hide all steps to begin
-                allSteps.forEach(step => step.classList.remove('active'));
-
-                quizFlow = [
-                    'problem-type', 'author-info', 'author-cpf', 'author-address',
-                    'author-contact', 'company-info', 'provas-gerais', 
-                    'valores-pedidos', 'info-finais'
-                ];
-                currentStepIndex = 0;
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const currentlyActive = document.querySelector('.faq-item.active');
+                if (currentlyActive && currentlyActive !== item) {
+                    currentlyActive.classList.remove('active');
+                    currentlyActive.querySelector('.faq-answer').style.maxHeight = null;
+                }
                 
-                // Show the very first step
-                const firstStep = allSteps.find(s => s.dataset.stepId === quizFlow[0]);
-                if (firstStep) {
-                    firstStep.classList.add('active');
+                item.classList.toggle('active');
+                const answer = item.querySelector('.faq-answer');
+                if (item.classList.contains('active')) {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                } else {
+                    answer.style.maxHeight = null;
                 }
+            });
+        });
 
-                updateProgress();
-                updateNavigationButtons();
-            }
+        // --- QUIZ LOGIC ---
+        const form = document.getElementById('petition-form');
+        const quizWrapper = document.getElementById('quiz-wrapper');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBarFill = document.querySelector('.progress-bar-fill');
+        const progressText = document.querySelector('.progress-text');
+        const allSteps = Array.from(document.querySelectorAll('.quiz-step'));
+        
+        const stepBlocks = {
+            corte_energia: ['corte-data', 'corte-aviso'],
+            danos_eletricos: ['oscilacao-data', 'oscilacao-equipamentos'],
+            toi: ['toi-numero', 'toi-cobranca'],
+            recusa_ligacao: ['recusa-data-solicitacao', 'recusa-motivo'],
+            cobranca_indevida: ['cobranca-tipo', 'cobranca-negativacao'],
+        };
 
-            function showStep(index) {
-                allSteps.forEach(step => step.classList.remove('active'));
-                const stepIdToShow = quizFlow[index];
-                const stepElement = allSteps.find(s => s.dataset.stepId === stepIdToShow);
-                if (stepElement) {
-                    stepElement.classList.add('active');
-                    const firstInput = stepElement.querySelector('input, select, textarea');
-                    if (firstInput) {
-                        firstInput.focus();
-                    }
-                }
-                updateProgress();
-                updateNavigationButtons();
-            }
+        let quizFlow = [];
+        let currentStepIndex = 0;
+
+        function buildInitialFlow() {
+             return [
+                'problem-type',
+                'author-info',
+                'author-cpf',
+                'author-address',
+                'author-contact',
+                'company-info',
+                'provas-gerais',
+                'valores-pedidos',
+                'info-finais'
+            ];
+        }
+
+        function startQuiz() {
+            quizFlow = buildInitialFlow();
+            currentStepIndex = 0;
             
-            function updateProgress() {
-                if (quizFlow.length > 0) {
-                    const progressPercentage = Math.max(0, ((currentStepIndex) / (quizFlow.length - 1))) * 100;
-                    progressBarFill.style.width = `${progressPercentage}%`;
-                    progressText.textContent = `Pergunta ${currentStepIndex + 1} de ${quizFlow.length}`;
-                }
-            }
+            allSteps.forEach(s => s.classList.remove('active'));
+            const firstStepElement = allSteps.find(s => s.dataset.stepId === quizFlow[0]);
+            if(firstStepElement) firstStepElement.classList.add('active');
 
-            function updateNavigationButtons() {
-                prevBtn.style.visibility = currentStepIndex === 0 ? 'hidden' : 'visible';
+            quizWrapper.style.display = 'block';
+            const resultScreen = allSteps.find(s => s.dataset.stepId === 'result-screen');
+            if(resultScreen) resultScreen.classList.remove('active');
+            
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function showStep(index) {
+            allSteps.forEach(step => step.classList.remove('active'));
+            const stepIdToShow = quizFlow[index];
+            const stepElement = allSteps.find(s => s.dataset.stepId === stepIdToShow);
+            if (stepElement) {
+                stepElement.classList.add('active');
+                const firstInput = stepElement.querySelector('input, select, textarea');
+                if (firstInput) firstInput.focus();
+            }
+            updateProgress();
+            updateNavigationButtons();
+        }
+        
+        function updateProgress() {
+            const progress = (currentStepIndex / (quizFlow.length - 1)) * 100;
+            progressBarFill.style.width = `${progress}%`;
+            progressText.textContent = `Pergunta ${currentStepIndex + 1} de ${quizFlow.length}`;
+        }
+
+        function updateNavigationButtons() {
+            prevBtn.style.visibility = currentStepIndex === 0 ? 'hidden' : 'visible';
+            nextBtn.textContent = currentStepIndex === quizFlow.length - 1 ? 'Gerar Petição' : 'Próximo';
+        }
+        
+        function navigate(direction) {
+            if (direction === 1) { // forward
+                if (!validateCurrentStep()) return;
+                
                 if (currentStepIndex === quizFlow.length - 1) {
-                    nextBtn.textContent = 'Gerar Petição';
+                    submitForm();
                 } else {
-                    nextBtn.textContent = 'Próximo';
+                    currentStepIndex++;
+                    updateQuizFlow(); // Update flow before showing next step
+                    showStep(currentStepIndex);
+                }
+            } else { // back
+                if (currentStepIndex > 0) {
+                    currentStepIndex--;
+                    updateQuizFlow();
+                    showStep(currentStepIndex);
                 }
             }
-            
-            function navigate(direction) {
-                if (direction === 1) { // Moving forward
-                    if (!validateCurrentStep()) return;
-                    
-                    updateQuizFlow(); // Recalculate flow before moving
-                    
-                    if (currentStepIndex === quizFlow.length - 1) {
-                        submitForm();
-                    } else {
-                        currentStepIndex++;
-                        showStep(currentStepIndex);
+        }
+
+        function validateCurrentStep() {
+            let isValid = true;
+            const currentStepId = quizFlow[currentStepIndex];
+            const currentStepElement = allSteps.find(s => s.dataset.stepId === currentStepId);
+
+            if (!currentStepElement) return true;
+
+            currentStepElement.querySelectorAll('[required]').forEach(input => {
+                const formGroup = input.closest('.form-group');
+                let inputValid = true;
+
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    const name = input.name;
+                    if (!form.querySelector(`input[name="${name}"]:checked`)) {
+                        inputValid = false;
                     }
-                } else { // Moving backward
-                     if (currentStepIndex > 0) {
-                        currentStepIndex--;
-                        showStep(currentStepIndex);
-                    }
-                }
-            }
-
-            function validateCurrentStep() {
-                let isValid = true;
-                const currentStepId = quizFlow[currentStepIndex];
-                const currentStepElement = allSteps.find(s => s.dataset.stepId === currentStepId);
-
-                if (!currentStepElement) return false;
-
-                currentStepElement.querySelectorAll('[required]').forEach(input => {
-                    const formGroup = input.closest('.form-group');
-                    let isInputValid = true;
-
-                    if (input.type === 'radio' || input.type === 'checkbox') {
-                         const checked = currentStepElement.querySelector(`input[name="${input.name}"]:checked`);
-                         if (!checked) isInputValid = false;
-                    } else {
-                        if (!input.value.trim()) isInputValid = false;
-                    }
-
-                    if (!isInputValid) {
-                        isValid = false;
-                        if(formGroup) formGroup.classList.add('invalid');
-                    } else {
-                         if(formGroup) formGroup.classList.remove('invalid');
-                    }
-                });
-                return isValid;
-            }
-
-            function updateQuizFlow() {
-                const formData = new FormData(form);
-                const data = Object.fromEntries(formData.entries());
-
-                // --- Main Problem Branching ---
-                const allProblemSteps = Object.values(stepBlocks).flat();
-                let baseFlow = [
-                    'problem-type', 'author-info', 'author-cpf', 'author-address',
-                    'author-contact', 'company-info', 'provas-gerais', 
-                    'valores-pedidos', 'info-finais'
-                ];
-                
-                const problemType = data['problem-type'];
-                if (problemType && stepBlocks[problemType]) {
-                    const companyInfoIndex = baseFlow.indexOf('company-info');
-                    if(companyInfoIndex > -1) {
-                       baseFlow.splice(companyInfoIndex + 1, 0, ...stepBlocks[problemType]);
-                    }
+                } else if (!input.value.trim()) {
+                    inputValid = false;
                 }
                 
-                // --- Conditional Steps ---
-                const conditionalSteps = {
-                    'corte-prejuizo-detalhes': data['corte-prejuizo-pergunta'] === 'sim' ? 'corte-prejuizo-pergunta' : null,
-                    'oscilacao-protocolo': data['oscilacao-comunicacao'] === 'sim' ? 'oscilacao-comunicacao' : null,
-                    'cobranca-protocolos': data['cobranca-reclamacao'] === 'sim' ? 'cobranca-reclamacao' : null,
-                };
-
-                let newFlow = [];
-                for(const step of baseFlow) {
-                    newFlow.push(step);
-                    for (const [conditionalStep, trigger] of Object.entries(conditionalSteps)) {
-                        if (step === trigger) {
-                            newFlow.push(conditionalStep);
-                        }
-                    }
+                if (!inputValid) {
+                    isValid = false;
+                    if (formGroup) formGroup.classList.add('invalid');
+                } else {
+                    if (formGroup) formGroup.classList.remove('invalid');
                 }
+            });
+            return isValid;
+        }
 
-                quizFlow = newFlow;
-            }
+        function updateQuizFlow() {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
             
-            async function submitForm() {
-                if (API_URL.includes("COLE_A_URL_DO_SEU_BACKEND_AQUI")) {
-                    alert("ERRO: A URL do backend não foi configurada. Por favor, edite o arquivo index.html e adicione a URL do seu serviço no Render.");
-                    return;
-                }
+            let newFlow = buildInitialFlow();
+            const problemType = data['problem-type'];
 
-                nextBtn.textContent = 'Gerando...';
-                nextBtn.disabled = true;
-
-                const formData = new FormData(form);
-                const data = {};
-                 formData.forEach((value, key) => {
-                    if (data[key]) {
-                        if (!Array.isArray(data[key])) {
-                            data[key] = [data[key]];
-                        }
-                        data[key].push(value);
-                    } else {
-                        data[key] = value;
-                    }
-                });
-
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data),
-                        mode: 'cors'
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.error || 'Erro no servidor. Verifique o log do seu backend no Render para mais detalhes.');
-                    }
-
-                    const result = await response.json();
-                    const petitionText = result.text || 'Ocorreu um erro e a IA não retornou um texto.';
-
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF({
-                        orientation: 'p',
-                        unit: 'mm',
-                        format: 'a4'
-                    });
-
-                    const margin = 20;
-                    const maxWidth = doc.internal.pageSize.width - margin * 2;
-                    
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(12);
-
-                    const lines = doc.splitTextToSize(petitionText, maxWidth);
-                    let cursorY = margin;
-
-                    lines.forEach(line => {
-                        if (cursorY > doc.internal.pageSize.height - margin) {
-                            doc.addPage();
-                            cursorY = margin;
-                        }
-                        doc.text(line, margin, cursorY);
-                        cursorY += 7; // Line height
-                    });
-                    
-                    doc.save('peticao.pdf');
-
-                    setTimeout(() => {
-                        form.style.display = 'none';
-                        resultScreen.style.display = 'block';
-                    }, 500);
-
-                } catch (error) {
-                    console.error("Erro ao comunicar com o backend:", error);
-                    alert("Ocorreu um erro ao gerar a petição: " + error.message);
-                } finally {
-                    nextBtn.textContent = 'Gerar Petição';
-                    nextBtn.disabled = false;
+            if (problemType && stepBlocks[problemType]) {
+                const companyInfoIndex = newFlow.indexOf('company-info');
+                if (companyInfoIndex > -1) {
+                    newFlow.splice(companyInfoIndex + 1, 0, ...stepBlocks[problemType]);
                 }
             }
+            quizFlow = newFlow;
+        }
+        
+        async function submitForm() {
+            nextBtn.textContent = 'Gerando...';
+            nextBtn.disabled = true;
 
-            // Remove error on input/change for real-time feedback
-            form.querySelectorAll('input, select, textarea').forEach(input => {
-                const eventType = (input.tagName === 'SELECT' || input.type === 'radio' || input.type === 'checkbox') ? 'change' : 'input';
-                input.addEventListener(eventType, (e) => {
-                    e.target.closest('.form-group')?.classList.remove('invalid');
-                });
-            });
-            
-            // Event Listeners for navigation
-            nextBtn.addEventListener('click', () => navigate(1));
-            prevBtn.addEventListener('click', () => navigate(-1));
-            
-            document.getElementById('restart-quiz-btn').addEventListener('click', () => {
-                 resultScreen.style.display = 'none';
-                 form.style.display = 'block';
-                 form.reset();
-                 startQuiz();
-            });
-
-            // Toggle Dano moral value input
-             const danoMoralRadio = document.querySelectorAll('input[name="dano-moral-pergunta"]');
-             const danoMoralValueGroup = document.getElementById('dano-moral-valor-group');
-             danoMoralRadio.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    danoMoralValueGroup.style.display = e.target.value === 'sim' ? 'block' : 'none';
-                });
-             });
-
-
-            // Currency formatting for value inputs
-            const valueInputs = ['moral-value', 'material-value'];
-            valueInputs.forEach(id => {
-                const input = document.getElementById(id);
-                if(input) {
-                    input.addEventListener('input', () => {
-                        let value = input.value.replace(/\D/g, ''); 
-                        if (value === '') {
-                            input.value = '';
-                            return;
-                        }
-                        value = (parseInt(value, 10) / 100).toLocaleString('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                        });
-                        input.value = value;
-                    });
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                // Handle checkboxes
+                if (key.endsWith('[]')) {
+                    const cleanKey = key.slice(0, -2);
+                    if (!data[cleanKey]) {
+                        data[cleanKey] = [];
+                    }
+                    data[cleanKey].push(value);
+                } else {
+                    data[key] = value;
                 }
             });
 
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
 
-            // Initialize the quiz
+                if (!response.ok) {
+                    throw new Error('Erro no servidor.');
+                }
+
+                const result = await response.json();
+                const petitionText = result.text || 'Não foi possível gerar o texto.';
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                const margin = 20;
+                const maxWidth = doc.internal.pageSize.width - margin * 2;
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(12);
+                
+                const lines = doc.splitTextToSize(petitionText, maxWidth);
+                
+                let cursorY = margin;
+                lines.forEach(line => {
+                    if (cursorY > doc.internal.pageSize.height - margin) {
+                        doc.addPage();
+                        cursorY = margin;
+                    }
+                    doc.text(line, margin, cursorY);
+                    cursorY += 7;
+                });
+                
+                doc.save('peticao.pdf');
+                
+                showStep(quizFlow.indexOf('result-screen'));
+
+            } catch (error) {
+                console.error("Falha ao gerar petição:", error);
+                alert("Ocorreu um erro ao gerar a petição: " + error.message + " Verifique o log do seu backend no Render para mais detalhes.");
+            } finally {
+                nextBtn.textContent = 'Gerar Petição';
+                nextBtn.disabled = false;
+            }
+        }
+
+        form.querySelectorAll('input, select, textarea').forEach(input => {
+            const eventType = (input.tagName === 'SELECT' || input.type.match(/radio|checkbox/)) ? 'change' : 'input';
+            input.addEventListener(eventType, (e) => {
+                e.target.closest('.form-group')?.classList.remove('invalid');
+            });
+        });
+        
+        nextBtn.addEventListener('click', () => navigate(1));
+        prevBtn.addEventListener('click', () => navigate(-1));
+        
+        document.getElementById('restart-quiz-btn').addEventListener('click', () => {
+            form.reset();
             startQuiz();
         });
+        
+        startQuiz();
+    });
     </script>
 </body>
-</html>Eu nao vou usar o netfly. quero todos os arquivos num lugar so para subir no render. É possivel?
-
+</html>
