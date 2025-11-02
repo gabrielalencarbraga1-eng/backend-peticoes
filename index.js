@@ -1,131 +1,90 @@
-// index.js
-// Backend SuaPetição – Express + Gemini (@google/generative-ai)
+import express from 'express';
+import cors from 'cors';
+import { GoogleGenAI } from '@google/genai';
 
-import express from "express";
-import cors from "cors";
-import { GoogleGenerativeAI } from "@google/generative-ai"; // <= SDK estável
-
-// ------------------------------------------------------------
-// Configuração básica do servidor
-// ------------------------------------------------------------
 const app = express();
-const port = process.env.PORT || 10000;
+const port = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    // opcional: restrinja ao domínio do seu Netlify em produção
-    // origin: ["https://SEU-SITE.netlify.app"],
-    origin: "*",
-  })
-);
+// Lista de origens permitidas
+const whitelist = ['https://inspiring-pika-02f0fd.netlify.app', 'http://localhost:3000', 'http://127.0.0.1:3000'];
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// ------------------------------------------------------------
-// Verificação da API KEY e inicialização do cliente Gemini
-// ------------------------------------------------------------
-const API_KEY = process.env.API_KEY;
-if (!API_KEY) {
-  console.error(
-    "ERRO: A variável de ambiente API_KEY não está definida no Render."
-  );
-}
-const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
-
-// Health check
-app.get("/", (_req, res) => {
-  res.send("Backend da SuaPetição está no ar!");
+// Endpoint de "saúde" para verificar se o servidor está no ar
+app.get('/', (req, res) => {
+    res.status(200).send('Servidor de Petições está no ar!');
 });
 
-// ------------------------------------------------------------
-// Utilidades
-// ------------------------------------------------------------
-const getProblemDescription = (data) => {
-  const map = {
-    corte_energia: "Corte indevido de energia",
-    danos_eletricos: "Oscilação/queda que danificou aparelhos",
-    toi: "Multa / TOI indevido",
-    recusa_ligacao: "Recusa na ligação de nova energia",
-    cobranca_indevida: "Cobrança indevida na conta",
-    outro: "Outro problema",
-  };
-  return map[data["problem-type"]] || "Não especificado";
-};
+app.post('/api/generate-petition', async (req, res) => {
+    try {
+        const data = req.body;
+        
+        if (!data || !data['problem-type'] || !data['author-name']) {
+            return res.status(400).json({ error: 'Dados insuficientes para gerar a petição.' });
+        }
+        
+        const apiKey = process.env.API_KEY;
+        if (!apiKey) {
+            console.error("API_KEY não encontrada nas variáveis de ambiente.");
+            return res.status(500).json({ error: 'Configuração do servidor incompleta: API_KEY ausente.' });
+        }
 
-const toList = (v) => {
-  if (Array.isArray(v)) return v.join(", ");
-  if (typeof v === "string" && v.trim()) return v;
-  return "Nenhuma especificada";
-};
+        const ai = new GoogleGenAI({ apiKey });
 
-// ------------------------------------------------------------
-// Rota de geração da petição
-// ------------------------------------------------------------
-app.post("/api/generate-petition", async (req, res) => {
-  try {
-    if (!genAI) {
-      return res.status(500).json({
-        error:
-          "Configuração do servidor incompleta: API_KEY não encontrada no backend.",
-      });
+        const prompt = `
+            Você é um assistente jurídico especializado em direito do consumidor para Juizados Especiais Cíveis (JEC) no Brasil.
+            Sua tarefa é redigir uma petição inicial clara, objetiva e bem fundamentada, com base nos dados fornecidos pelo usuário.
+            Use uma linguagem formal, mas acessível. A petição deve ser formatada corretamente, com parágrafos bem definidos.
+
+            ESTRUTURA DA PETIÇÃO:
+            1.  **Endereçamento:** "EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DO JUIZADO ESPECIAL CÍVEL DA COMARCA DE ${data['action-city-state'] || '[Cidade e Estado não informados]}."
+            2.  **Qualificação do Autor:** ${data['author-name'] || '[Nome não informado]'}, nacionalidade brasileiro(a), estado civil (não informado), profissão (não informada), portador(a) do CPF nº ${data['author-cpf'] || '[CPF não informado]'}, residente e domiciliado(a) no endereço ${data['author-address'] || '[Endereço não informado]'}, com e-mail ${data['author-email'] || '[E-mail não informado]'} e telefone ${data['author-phone'] || '[Telefone não informado]'}.
+            3.  **Nome da Ação:** "AÇÃO DE INDENIZAÇÃO POR DANOS MATERIAIS E MORAIS" (Ajuste o nome conforme o caso, por exemplo, se houver pedido de obrigação de fazer).
+            4.  **Qualificação do Réu:** ${data['company-name'] || '[Nome da empresa não informado]'}, pessoa jurídica de direito privado, inscrita no CNPJ (a ser consultado), com sede em endereço (a ser consultado), pelos fatos e fundamentos a seguir expostos.
+            5.  **Dos Fatos:** Narre os acontecimentos de forma cronológica e detalhada com base nos dados a seguir. Seja coeso e claro.
+            6.  **Do Direito:** Apresente uma breve fundamentação jurídica, citando o Código de Defesa do Consumidor (Lei 8.078/90), focando na falha na prestação de serviço e na responsabilidade objetiva do fornecedor.
+            7.  **Dos Pedidos:** Liste os pedidos de forma clara e numerada:
+                a) A citação da ré para, querendo, apresentar resposta, sob pena de revelia;
+                b) A inversão do ônus da prova, nos termos do art. 6º, VIII, do CDC;
+                ${data['material-value'] && data['material-value'] !== 'R$ 0,00' ? `c) A condenação da ré a pagar indenização por danos materiais no valor de ${data['material-value']};` : ''}
+                ${data['dano-moral-pergunta'] === 'sim' ? `d) A condenação da ré a pagar indenização por danos morais em valor a ser arbitrado por este juízo, sugerindo-se o valor de R$ 5.000,00 (cinco mil reais) como parâmetro mínimo;` : ''}
+                ${data['liminar-pergunta'] === 'sim' ? `e) A concessão de tutela de urgência para determinar que a ré [descrever o pedido liminar, ex: restabeleça o fornecimento de energia no endereço do autor], sob pena de multa diária;` : ''}
+            8.  **Do Valor da Causa:** Dê-se à causa o valor de ${data['material-value'] || 'R$ 5.000,00'}.
+            9.  **Fechamento:** "Nestes termos, pede deferimento. \n\n${data['action-city-state'] || '[Local]'}, [Data Atual]."
+
+            DADOS DETALHADOS DO CASO:
+            - **Tipo de Problema:** ${data['problem-type']}
+            - **Resumo dos Dados Fornecidos:** ${JSON.stringify(data, null, 2)}
+            
+            Agora, redija a petição completa.
+        `;
+        
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-pro',
+            contents: [{ parts: [{ text: prompt }] }],
+        });
+
+        res.json({ text: response.text });
+
+    } catch (error) {
+        console.error("Erro detalhado ao chamar a API Gemini:", error);
+        res.status(500).json({ 
+            error: 'Falha ao comunicar com a IA.',
+            details: error.message 
+        });
     }
-
-    const data = req.body;
-
-    const prompt = `
-Aja como um advogado especialista em direito do consumidor e redija uma PETIÇÃO INICIAL para o Juizado Especial Cível, em linguagem formal e jurídica, com as seções estruturadas.
-
-1) DADOS DO AUTOR
-- Nome: ${data["author-name"]}
-- CPF: ${data["author-cpf"]}
-- Endereço: ${data["author-address"]}
-- E-mail: ${data["author-email"]}
-- Telefone: ${data["author-phone"]}
-
-2) RÉ (CONCESSIONÁRIA)
-- Nome: ${data["company-name"]}
-
-3) DETALHES / FATOS
-- Tipo do problema: ${getProblemDescription(data)}
-- Corte: data=${data["corte-data"] || "N/A"}, aviso=${data["corte-aviso"] || "N/A"}, dívida=${data["corte-divida"] || "N/A"}, religação=${data["corte-religacao-data"] || "Ainda não religada"}, prejuízos=${data["corte-prejuizo-detalhes"] || "N/A"}
-- Oscilação: data=${data["oscilacao-data"] || "N/A"}, equipamentos=${data["oscilacao-equipamentos"] || "N/A"}, comunicou=${data["oscilacao-comunicacao"] || "N/A"}, protocolo=${data["oscilacao-protocolo"] || "N/A"}
-- TOI: número=${data["toi-numero"] || "N/A"}, data=${data["toi-data"] || "N/A"}, presença=${data["toi-presente"] || "N/A"}, cobrança/corte após TOI=${data["toi-cobranca"] || "N/A"}
-- Recusa de ligação: solicitação=${data["recusa-data-solicitacao"] || "N/A"}, motivo=${data["recusa-motivo"] || "N/A"}, protocolo=${data["recusa-protocolo"] || "N/A"}, há moradores sem energia=${data["recusa-moradores"] || "N/A"}
-- Cobrança indevida: tipo=${data["cobranca-tipo"] || "N/A"}, reclamou=${data["cobranca-reclamacao"] || "N/A"}, protocolos=${data["cobranca-protocolos"] || "N/A"}, negativação=${data["cobranca-negativacao"] || "N/A"}
-
-4) PROVAS: ${toList(data.provas)}
-
-5) PEDIDOS E VALORES
-- Tutela de urgência (liminar): ${data["urgency-request"]}
-- Danos materiais: ${data["material-value"] || "R$ 0,00"}
-- Danos morais: ${data["dano-moral-pergunta"]}
-- Valor sugerido danos morais: ${data["moral-value"] || "a ser arbitrado"}
-- Foro: ${data["cidade-estado"]}
-
-INSTRUÇÕES DE REDAÇÃO:
-- Estruture com: Endereçamento; Qualificação das partes; I - DOS FATOS; II - DO DIREITO (CDC e resoluções ANEEL aplicáveis ao caso); III - DA TUTELA DE URGÊNCIA (somente se houve pedido de liminar); IV - DOS PEDIDOS.
-- Nos pedidos, incluir: citação da ré; inversão do ônus da prova; confirmação da liminar (se houver); condenação em danos materiais (se houver); condenação em danos morais; declaração de inexigibilidade de débito quando aplicável (TOI/cobrança indevida); custas e honorários quando cabíveis.
-- VALOR DA CAUSA: soma dos materiais + morais. Se os morais estiverem "a ser arbitrado", considerar valor de alçada (ex.: R$ 10.000,00) apenas para cálculo.
-- Linguagem corrida, sem markdown, pronta para colar; incluir ao final "Nestes termos, pede deferimento.", [Local], [Data] e espaço para assinatura do Autor.
-`;
-
-    // Modelo: use "gemini-1.5-pro" (mais robusto) ou "gemini-1.5-flash" (mais rápido/barato)
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-
-    return res.json({ text });
-  } catch (err) {
-    console.error("Erro ao gerar petição:", err);
-    const msg =
-      err?.message ||
-      err?.response?.error?.message ||
-      "Falha desconhecida ao contatar a IA.";
-    return res.status(500).json({ error: msg });
-  }
 });
 
-// ------------------------------------------------------------
 app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
+    console.log(`Servidor rodando na porta ${port}`);
 });
