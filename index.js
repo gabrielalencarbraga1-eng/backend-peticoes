@@ -1,132 +1,131 @@
-// Importação dos pacotes necessários
-import express from 'express';
-import cors from 'cors';
-import { GoogleGenAI } from '@google/genai';
+// index.js
+// Backend SuaPetição – Express + Gemini (@google/generative-ai)
 
-// Inicialização do Express
+import express from "express";
+import cors from "cors";
+import { GoogleGenerativeAI } from "@google/generative-ai"; // <= SDK estável
+
+// ------------------------------------------------------------
+// Configuração básica do servidor
+// ------------------------------------------------------------
 const app = express();
-const port = process.env.PORT || 10000; // Porta padrão do Render
+const port = process.env.PORT || 10000;
 
-// Middlewares
-app.use(cors()); // Habilita CORS para permitir requisições do frontend
-app.use(express.json()); // Habilita o parsing de JSON no corpo das requisições
+app.use(
+  cors({
+    // opcional: restrinja ao domínio do seu Netlify em produção
+    // origin: ["https://SEU-SITE.netlify.app"],
+    origin: "*",
+  })
+);
+app.use(express.json());
 
-// Inicialização do cliente Gemini AI
-// A API Key é pega da variável de ambiente, como manda a boa prática.
-let ai;
-if (process.env.API_KEY) {
-    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// ------------------------------------------------------------
+// Verificação da API KEY e inicialização do cliente Gemini
+// ------------------------------------------------------------
+const API_KEY = process.env.API_KEY;
+if (!API_KEY) {
+  console.error(
+    "ERRO: A variável de ambiente API_KEY não está definida no Render."
+  );
 }
+const genAI = API_KEY ? new GoogleGenerativeAI(API_KEY) : null;
 
-// Rota de "health check" para o Render saber que o serviço está no ar
-app.get('/', (req, res) => {
-    res.send('Backend da SuaPetição está no ar!');
+// Health check
+app.get("/", (_req, res) => {
+  res.send("Backend da SuaPetição está no ar!");
 });
 
-// Função auxiliar para mapear os valores do formulário para texto legível
+// ------------------------------------------------------------
+// Utilidades
+// ------------------------------------------------------------
 const getProblemDescription = (data) => {
-    const descriptions = {
-        corte_energia: "Corte indevido de energia",
-        danos_eletricos: "Oscilação/queda que danificou aparelhos",
-        toi: "Multa / TOI indevido",
-        recusa_ligacao: "Recusa na ligação de nova energia",
-        cobranca_indevida: "Cobrança indevida na conta",
-        outro: "Outro problema"
-    };
-    return descriptions[data['problem-type']] || "Não especificado";
+  const map = {
+    corte_energia: "Corte indevido de energia",
+    danos_eletricos: "Oscilação/queda que danificou aparelhos",
+    toi: "Multa / TOI indevido",
+    recusa_ligacao: "Recusa na ligação de nova energia",
+    cobranca_indevida: "Cobrança indevida na conta",
+    outro: "Outro problema",
+  };
+  return map[data["problem-type"]] || "Não especificado";
 };
 
-// Definição da rota da API para gerar a petição
-app.post('/api/generate-petition', async (req, res) => {
-    if (!ai) {
-        console.error("ERRO GRAVE: A chave de API do Gemini não foi configurada no servidor.");
-        return res.status(500).json({ error: "Configuração do servidor incompleta: A chave de API não foi encontrada." });
+const toList = (v) => {
+  if (Array.isArray(v)) return v.join(", ");
+  if (typeof v === "string" && v.trim()) return v;
+  return "Nenhuma especificada";
+};
+
+// ------------------------------------------------------------
+// Rota de geração da petição
+// ------------------------------------------------------------
+app.post("/api/generate-petition", async (req, res) => {
+  try {
+    if (!genAI) {
+      return res.status(500).json({
+        error:
+          "Configuração do servidor incompleta: API_KEY não encontrada no backend.",
+      });
     }
 
-    try {
-        const formData = req.body;
+    const data = req.body;
 
-        // --- Construção do Prompt para a IA ---
-        const prompt = `
-            Aja como um advogado especialista em direito do consumidor e redija uma petição inicial para o Juizado Especial Cível, usando uma linguagem formal e jurídica.
-            A petição deve ser completa, bem estruturada, e baseada nos seguintes dados fornecidos por um cliente:
+    const prompt = `
+Aja como um advogado especialista em direito do consumidor e redija uma PETIÇÃO INICIAL para o Juizado Especial Cível, em linguagem formal e jurídica, com as seções estruturadas.
 
-            **1. DADOS DO AUTOR (CLIENTE):**
-            - Nome Completo: ${formData['author-name']}
-            - CPF: ${formData['author-cpf']}
-            - Endereço Completo: ${formData['author-address']}
-            - E-mail: ${formData['author-email']}
-            - Telefone: ${formData['author-phone']}
+1) DADOS DO AUTOR
+- Nome: ${data["author-name"]}
+- CPF: ${data["author-cpf"]}
+- Endereço: ${data["author-address"]}
+- E-mail: ${data["author-email"]}
+- Telefone: ${data["author-phone"]}
 
-            **2. DADOS DA RÉ (EMPRESA):**
-            - Nome da Concessionária: ${formData['company-name']}
+2) RÉ (CONCESSIONÁRIA)
+- Nome: ${data["company-name"]}
 
-            **3. DETALHES DO CASO:**
-            - Tipo do Problema: ${getProblemDescription(formData)}
-            - Narração dos Fatos: Com base nos dados a seguir, construa uma seção "DOS FATOS" coesa e detalhada, integrando as informações de forma narrativa e fluida. Ignore os campos com 'N/A' ou vazios.
-                - Data do corte de energia: ${formData['corte-data'] || 'N/A'}
-                - Houve aviso de corte: ${formData['corte-aviso'] || 'N/A'}
-                - Havia dívida pendente: ${formData['corte-divida'] || 'N/A'}
-                - Data da religação: ${formData['corte-religacao-data'] || 'Ainda não religada'}
-                - Prejuízos do corte: ${formData['corte-prejuizo-detalhes'] || 'N/A'}
-                - Data da oscilação de energia: ${formData['oscilacao-data'] || 'N/A'}
-                - Equipamentos danificados: ${formData['oscilacao-equipamentos'] || 'N/A'}
-                - Comunicou a empresa sobre os danos: ${formData['oscilacao-comunicacao'] || 'N/A'}
-                - Protocolo sobre os danos: ${formData['oscilacao-protocolo'] || 'N/A'}
-                - Número do TOI: ${formData['toi-numero'] || 'N/A'}
-                - Data do TOI: ${formData['toi-data'] || 'N/A'}
-                - Estava presente na vistoria do TOI: ${formData['toi-presente'] || 'N/A'}
-                - Houve cobrança ou corte após TOI: ${formData['toi-cobranca'] || 'N/A'}
-                - Data da solicitação de nova ligação: ${formData['recusa-data-solicitacao'] || 'N/A'}
-                - Motivo da recusa da ligação: ${formData['recusa-motivo'] || 'N/A'}
-                - Protocolo da recusa: ${formData['recusa-protocolo'] || 'N/A'}
-                - Há moradores no imóvel sem energia: ${formData['recusa-moradores'] || 'N/A'}
-                - Tipo de cobrança indevida: ${formData['cobranca-tipo'] || 'N/A'}
-                - Houve reclamação sobre a cobrança: ${formData['cobranca-reclamacao'] || 'N/A'}
-                - Protocolos da reclamação: ${formData['cobranca-protocolos'] || 'N/A'}
-                - Nome foi negativado: ${formData['cobranca-negativacao'] || 'N/A'}
-            
-            **4. PROVAS:**
-            - Lista de provas a serem anexadas: ${Array.isArray(formData.provas) ? formData.provas.join(', ') : formData.provas || 'Nenhuma especificada'}
+3) DETALHES / FATOS
+- Tipo do problema: ${getProblemDescription(data)}
+- Corte: data=${data["corte-data"] || "N/A"}, aviso=${data["corte-aviso"] || "N/A"}, dívida=${data["corte-divida"] || "N/A"}, religação=${data["corte-religacao-data"] || "Ainda não religada"}, prejuízos=${data["corte-prejuizo-detalhes"] || "N/A"}
+- Oscilação: data=${data["oscilacao-data"] || "N/A"}, equipamentos=${data["oscilacao-equipamentos"] || "N/A"}, comunicou=${data["oscilacao-comunicacao"] || "N/A"}, protocolo=${data["oscilacao-protocolo"] || "N/A"}
+- TOI: número=${data["toi-numero"] || "N/A"}, data=${data["toi-data"] || "N/A"}, presença=${data["toi-presente"] || "N/A"}, cobrança/corte após TOI=${data["toi-cobranca"] || "N/A"}
+- Recusa de ligação: solicitação=${data["recusa-data-solicitacao"] || "N/A"}, motivo=${data["recusa-motivo"] || "N/A"}, protocolo=${data["recusa-protocolo"] || "N/A"}, há moradores sem energia=${data["recusa-moradores"] || "N/A"}
+- Cobrança indevida: tipo=${data["cobranca-tipo"] || "N/A"}, reclamou=${data["cobranca-reclamacao"] || "N/A"}, protocolos=${data["cobranca-protocolos"] || "N/A"}, negativação=${data["cobranca-negativacao"] || "N/A"}
 
-            **5. PEDIDOS E VALORES:**
-            - Pedido de Tutela de Urgência (Liminar): ${formData['urgency-request']} (Se 'sim', elabore um pedido de liminar conciso e bem fundamentado, demonstrando o 'fumus boni iuris' e o 'periculum in mora' para o caso específico).
-            - Valor do Dano Material: ${formData['material-value'] || 'R$ 0,00'}
-            - Pedido de Dano Moral: ${formData['dano-moral-pergunta']}
-            - Valor Sugerido para Dano Moral: ${formData['moral-value'] || 'a ser arbitrado pelo juízo'}
-            - Cidade e Estado para o ajuizamento: ${formData['cidade-estado']}
+4) PROVAS: ${toList(data.provas)}
 
-            **INSTRUÇÕES DE FORMATAÇÃO E ESTRUTURA:**
-            - Inicie com o endereçamento: "EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DO JUIZADO ESPECIAL CÍVEL DA COMARCA DE ${formData['cidade-estado']}".
-            - Prossiga com a qualificação completa do autor e da ré (pode usar um CNPJ genérico como 00.000.000/0001-00 se não informado).
-            - Crie as seguintes seções, numeradas em algarismos romanos: "I - DOS FATOS", "II - DO DIREITO" (fundamente com o Código de Defesa do Consumidor e resoluções da ANEEL pertinentes ao caso), "III - DA TUTELA DE URGÊNCIA" (apenas se solicitado), "IV - DOS PEDIDOS".
-            - Na seção "DOS PEDIDOS", liste claramente cada pedido: a citação da ré, a inversão do ônus da prova, a confirmação da tutela de urgência (se houver), a condenação ao pagamento de danos materiais (se houver), a condenação ao pagamento de danos morais, e a declaração de inexigibilidade de débito (se aplicável ao caso, como em TOI ou cobrança indevida).
-            - Conclua com o "VALOR DA CAUSA", que deve ser a soma dos danos materiais e morais. Se o dano moral for 'a ser arbitrado', use um valor de alçada para o cálculo (ex: R$ 10.000,00).
-            - Finalize com "Nestes termos, pede deferimento.", seguido de "[Local], [Data]", e um espaço para "[Nome do Autor]".
-            - O texto deve ser contínuo, sem markdown, pronto para ser copiado e colado.
-        `;
+5) PEDIDOS E VALORES
+- Tutela de urgência (liminar): ${data["urgency-request"]}
+- Danos materiais: ${data["material-value"] || "R$ 0,00"}
+- Danos morais: ${data["dano-moral-pergunta"]}
+- Valor sugerido danos morais: ${data["moral-value"] || "a ser arbitrado"}
+- Foro: ${data["cidade-estado"]}
 
-        // Chamada para a API do Gemini
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-pro',
-            contents: [{ parts: [{ text: prompt }] }],
-        });
+INSTRUÇÕES DE REDAÇÃO:
+- Estruture com: Endereçamento; Qualificação das partes; I - DOS FATOS; II - DO DIREITO (CDC e resoluções ANEEL aplicáveis ao caso); III - DA TUTELA DE URGÊNCIA (somente se houve pedido de liminar); IV - DOS PEDIDOS.
+- Nos pedidos, incluir: citação da ré; inversão do ônus da prova; confirmação da liminar (se houver); condenação em danos materiais (se houver); condenação em danos morais; declaração de inexigibilidade de débito quando aplicável (TOI/cobrança indevida); custas e honorários quando cabíveis.
+- VALOR DA CAUSA: soma dos materiais + morais. Se os morais estiverem "a ser arbitrado", considerar valor de alçada (ex.: R$ 10.000,00) apenas para cálculo.
+- Linguagem corrida, sem markdown, pronta para colar; incluir ao final "Nestes termos, pede deferimento.", [Local], [Data] e espaço para assinatura do Autor.
+`;
 
-        // Retorna o texto gerado pela IA para o frontend
-        res.json({ text: response.text });
+    // Modelo: use "gemini-1.5-pro" (mais robusto) ou "gemini-1.5-flash" (mais rápido/barato)
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
-    } catch (error) {
-        // Log do erro detalhado no servidor
-        console.error('Erro detalhado ao chamar a API Gemini:', error);
-        
-        // Retorna uma mensagem de erro mais específica para o frontend
-        res.status(500).json({ 
-            error: `Falha na comunicação com a IA. Detalhes: ${error.message || 'Erro desconhecido.'}` 
-        });
-    }
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    return res.json({ text });
+  } catch (err) {
+    console.error("Erro ao gerar petição:", err);
+    const msg =
+      err?.message ||
+      err?.response?.error?.message ||
+      "Falha desconhecida ao contatar a IA.";
+    return res.status(500).json({ error: msg });
+  }
 });
 
-// Inicia o servidor
+// ------------------------------------------------------------
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
+  console.log(`Servidor rodando na porta ${port}`);
 });
